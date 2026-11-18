@@ -374,6 +374,8 @@ input[type='range'] { width: 100%; accent-color: var(--coral); margin: 0.5rem 0 
 .tonearm::before { content: ''; position: absolute; top: -6px; left: -6px; width: 20px; height: 20px; border-radius: 50%; background: var(--ink-soft); }
 .tonearm::after { content: ''; position: absolute; bottom: -4px; left: -4px; width: 16px; height: 22px; background: var(--ink); border-radius: 3px; }
 .vinyl-nook.playing .tonearm { transform: rotate(24deg); }
+.song { font: italic 1.05rem/1.3 var(--serif); margin: 0.1rem 0 0.2rem; }
+.song span { font-style: normal; color: var(--ink-soft); font-size: 0.9rem; }
 .now-playing { font: 500 1.1rem var(--hand); color: var(--ink-soft); margin: 0 0 0.6rem; }
 .small-link { font-size: 0.85rem; }
 

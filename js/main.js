@@ -376,12 +376,42 @@ $('.screen-cover').addEventListener('click', () => {
 const vinylNook = $('.vinyl-nook');
 const record = $('.record');
 let audio = null;
-record.addEventListener('click', () => {
+// On the live site the record plays Apple's official 30-second preview of the song,
+// found through the iTunes Search API (JSONP, so it works from a static page).
+// If that isn't reachable, it falls back to a soft ambient chord.
+let preview = null;
+function findPreview() {
+  return new Promise((resolve) => {
+    const cb = 'itunesCb' + Date.now();
+    const s = document.createElement('script');
+    const done = (url) => { delete window[cb]; s.remove(); resolve(url); };
+    window[cb] = (data) => {
+      const hit = (data.results || []).find((r) => /just like heaven/i.test(r.trackName) && /cure/i.test(r.artistName));
+      done(hit?.previewUrl || null);
+    };
+    s.onerror = () => done(null);
+    setTimeout(() => window[cb] && done(null), 4000);
+    s.src = `https://itunes.apple.com/search?term=just+like+heaven+the+cure&entity=song&limit=10&callback=${cb}`;
+    document.head.appendChild(s);
+  });
+}
+record.addEventListener('click', async () => {
   const on = record.getAttribute('aria-pressed') !== 'true';
   record.setAttribute('aria-pressed', String(on));
   vinylNook.classList.toggle('playing', on);
-  $('.now-playing').textContent = on ? '♪ now playing: your favorite song' : 'tap the record';
-  if (on) audio = playPad(); else audio?.stop();
+  $('.now-playing').textContent = on ? '♪ now playing' : 'tap the record';
+  if (!on) { audio?.stop(); audio = null; return; }
+  if (preview === null) preview = (await findPreview()) || false;
+  if (record.getAttribute('aria-pressed') !== 'true') return;
+  if (preview) {
+    const el = new Audio(preview);
+    el.volume = 0.6;
+    el.addEventListener('ended', () => record.click());
+    el.play().catch(() => {});
+    audio = { stop() { el.pause(); } };
+  } else {
+    audio = playPad();
+  }
 });
 function playPad() {
   const AC = window.AudioContext || window.webkitAudioContext;
