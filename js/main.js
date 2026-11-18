@@ -505,8 +505,8 @@ const track = $('.reel-track');
 const PLACES = [
   { name: 'Goa, India', x: 0.25, y: 0.55, tag: 'my favorite place', note: 'Golden-hour sunsets over the Arabian Sea.', photo: 'assets/photos/goa.jpg', alt: 'Sunset reflecting on the sea in Goa', fav: true },
   { name: 'Boston, MA', x: 0.78, y: 0.5, tag: 'places', note: 'My first winter: a frozen Public Garden lagoon.', photo: 'assets/photos/boston-winter.jpg', alt: 'The frozen lagoon in the Boston Public Garden on a clear winter day' },
-  { name: 'Amherst, MA', x: 0.62, y: 0.42, tag: 'places', note: 'Home base for college.' },
-  { name: 'Providence, RI', x: 0.7, y: 0.68, tag: 'places', note: 'Brown Pre-College, 2023.' },
+  { name: 'Amherst, MA', x: 0.62, y: 0.42, tag: 'places', note: 'Home base for college.', photo: 'assets/photos/amherst.jpg', alt: 'The UMass Amherst campus pond and fountain with the Old Chapel tower behind it' },
+  { name: 'New York City', x: 0.5, y: 0.78, tag: 'places', note: 'My first trip to NYC.', photo: 'assets/photos/nyc.jpg', alt: 'The main concourse of Grand Central Terminal under its painted constellation ceiling' },
 ];
 const pins = $('.pins');
 PLACES.forEach((p) => {
