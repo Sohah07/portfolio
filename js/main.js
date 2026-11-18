@@ -279,7 +279,13 @@ slider.addEventListener('input', () => {
 const STONES = [
   { when: 'year one', ph: true, title: 'GenWise · Manipal University', take: 'Introduction to AI and machine learning: my first real look under the hood.' },
   { when: 'year two', ph: true, title: 'GenWise residential internship', take: "Built an algorithm to solve the Rubik's cube.", gold: true },
-  { when: 'Summer 2022', title: 'Boston University Summer Challenge', take: 'Completed August 2022.', phTake: true },
+  { when: 'Summer 2022', title: 'Boston University Summer Challenge', take: 'Two courses: Economics, and Business from the Ground Up, where I led my team from product idea to an investor pitch.',
+    courses: [
+      { name: 'Business from the Ground Up', note: 'Led Team 4 from a product concept (Butter Booster by Cook-chen) through costs, sales forecasting and break-even to a draft business plan pitched to "investors". I built the financials and the newspaper ad.',
+        letter: 'assets/letters/bu-business-from-the-ground-up.pdf', letterLabel: "Read Professor Anastasi's evaluation" },
+      { name: 'Economics', note: 'Add one line on what you learned.', ph: true },
+    ],
+    quote: '"You are an innovator, contributing great ideas, challenging conventional wisdom with thoughtfulness and creativity." Professor Tom Anastasi, Questrom School of Business' },
   { when: 'Jul–Aug 2023', title: 'Brown Pre-College: AI, Data Science & ML', take: 'Built a linear regression model to predict response to a personal-loan campaign; data viz, ML and data science foundations.' },
   { when: 'Jan 2024', title: 'Inspirit AI Scholars Program', take: 'Awarded to high-performing student leaders worldwide.', phTake: true },
   { when: 'Feb 2024', title: 'Oxford Scholastica research internship', take: 'Co-authored the OxJournal paper on cryptocurrency and blockchain.', gold: true, link: '#research' },
@@ -302,12 +308,14 @@ STONES.forEach((s) => {
   li.innerHTML = `
     <span class="when">${s.when}${s.ph ? ' <i class="ph-dot" title="confirm"></i>' : ''}</span>
     <button class="rock${s.gold ? ' gold' : ''}" type="button" aria-label="Details: ${s.title}"></button>
-    <div class="card"><h3>${s.title}</h3><p class="take">${s.take}</p></div>`;
+    <div class="card"><h3>${s.title}</h3><p class="take">${s.take}</p>${(s.courses || []).filter((c) => c.letter).map((c) => `<a class="letter-link" href="${c.letter}" target="_blank" rel="noopener">${c.letterLabel} ↗</a>`).join('')}</div>`;
   $('.rock', li).addEventListener('click', () => openSheet(`
     <p class="tag">${s.when}</p>
     <h3 id="sheet-title">${s.title}</h3>
     <p>${s.take}</p>
     ${s.phTake ? '<p class="ph">Add one line on what you learned or made here.</p>' : ''}
+    ${s.courses ? `<ul class="courses">${s.courses.map((c) => `<li><h4>${c.name}</h4><p${c.ph ? ' class="ph"' : ''}>${c.note}</p>${c.letter ? `<a class="letter-link" href="${c.letter}" target="_blank" rel="noopener">${c.letterLabel} ↗</a>` : ''}</li>`).join('')}</ul>` : ''}
+    ${s.quote ? `<blockquote>${s.quote.replace(/" (.*)$/, '"<cite>$1</cite>')}</blockquote>` : ''}
     ${s.link ? `<p><a href="${s.link}" onclick="this.closest('dialog').close()">See the project ↓</a></p>` : ''}
     <div class="ph-box cert">certificate preview (cropped)</div>`));
   stones.appendChild(li);

@@ -283,6 +283,13 @@ input[type='range'] { width: 100%; accent-color: var(--coral); margin: 0.5rem 0 
   .stone .take { max-height: 120px !important; opacity: 1 !important; }
 }
 
+.letter-link { display: inline-block; margin-top: 0.4rem; font-size: 0.85rem; color: var(--coral-ink); text-decoration: none; border-bottom: 1px solid currentColor; }
+.letter-link:hover { color: var(--pond); }
+.sheet .courses { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 1rem; }
+.sheet .courses li { border-top: 1px solid var(--line); padding-top: 0.9rem; }
+.sheet .courses h4 { font-size: 1.1rem; margin-bottom: 0.3rem; }
+.sheet .courses p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
+
 /* ---------- 7. Stories ---------- */
 .cinema { background: #101718; color: #ece4d4; border-radius: 22px; padding: clamp(16px, 3vw, 28px); box-shadow: var(--shadow); }
 .letterbox { aspect-ratio: 21 / 9; border-radius: 12px; background: radial-gradient(ellipse at center, #2b3c3d, #0b1011); display: grid; place-content: center; text-align: center; gap: 0.8rem; position: relative; overflow: hidden; }
