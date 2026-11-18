@@ -196,12 +196,15 @@ $('.gf-replay').addEventListener('click', runGradeFlow);
 
 /* ---------- 4. Pebbles (GitHub) ---------- */
 const ICONS = {
+  highlighter: '<path d="M14 46 L34 26 L42 34 L22 54 Z"/><path d="M34 26 L42 18 L50 26 L42 34"/><path class="accent" d="M10 56 H40"/>',
   lens: '<path d="M14 20 L8 28 L14 36"/><path d="M30 20 L36 28 L30 36"/><circle class="accent" cx="40" cy="38" r="10"/><path class="accent" d="M47 45 L56 54"/>',
   house: '<path d="M10 32 L32 12 L54 32"/><path d="M16 28 V52 H48 V28"/><path class="accent" d="M26 52 V40 H38 V52"/>',
   tag: '<path d="M12 12 H34 L54 32 L34 52 L12 30 Z"/><circle class="accent" cx="22" cy="22" r="4"/>',
   scatter: '<path d="M10 54 H54 M10 54 V10"/><circle cx="18" cy="44" r="2.5"/><circle cx="26" cy="40" r="2.5"/><circle cx="32" cy="30" r="2.5"/><circle cx="42" cy="26" r="2.5"/><circle cx="48" cy="16" r="2.5"/><path class="accent" d="M14 48 L52 14"/>',
 };
 const REPOS = [
+  { name: 'Skimatic', repo: 'Skimatic', lang: 'JavaScript', icon: 'highlighter', tags: ['Chrome extension', 'NLP', 'Accessibility'],
+    desc: 'A Chrome extension that semantically summarizes an article and highlights its key ideas by category, designed to help readers with ADHD or dyslexia.' },
   { name: 'AI Code Reviewer', repo: 'AI_Code_Reviewer', lang: 'Python', icon: 'lens', tags: ['AST', 'LLM', 'GitHub'],
     desc: 'Reviews pull requests by pairing AST-based static analysis with LLM reasoning to flag bugs, code smells, security risks and missing tests.' },
   { name: 'NYC Airbnb Analysis', repo: 'New-York-AirBnb-Data-Analysis', lang: 'Jupyter', icon: 'house', tags: ['pandas', 'Geospatial', 'Data viz'],
