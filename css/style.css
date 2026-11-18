@@ -97,7 +97,12 @@ p { margin: 0 0 1em; }
 @media (max-width: 720px) { .nav { display: none; } }
 
 /* ---------- 1. Pond ---------- */
-.pond { position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--pond-deep); cursor: crosshair; }
+.pond:focus { outline: none; }
+.pond:focus-visible { outline: 2px solid rgba(244, 241, 234, 0.5); outline-offset: -8px; }
+.pond-hint span { display: block; }
+.pond-hint .hint-keys { margin-top: 0.35rem; opacity: 0.8; }
+@media (hover: none) { .pond-hint .hint-keys { display: none; } }
+.pond { touch-action: pan-y; position: relative; height: 100svh; min-height: 560px; overflow: hidden; background: var(--pond-deep); cursor: crosshair; }
 .pond-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .pond-text { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; pointer-events: none; padding: 0 16px; color: #f4f1ea; }
 .pond-text .eyebrow { color: rgba(244, 241, 234, 0.75); }

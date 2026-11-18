@@ -311,6 +311,8 @@ export class Pond {
     this.running = false;
     this.dusk = false;
     this.lastRipple = 0;
+    this.lure = { on: false, keys: new Set() };
+    this.lastRain = 0;
     this.t = 0;
     this.listeners = [];
     this.resize();
@@ -366,9 +368,72 @@ export class Pond {
       const x = e.clientX - r.left, y = e.clientY - r.top;
       this.addRipple(x, y, 120, 2.6, 0.7);
       setTimeout(() => this.addRipple(x, y, 70, 2.0, 0.45), 180);
-      this.pellets.push({ x, y, born: performance.now(), eaten: false });
-      this.emit('feed');
+      this.feed(x, y);
     });
+    // Touch: a tap or drag also leads the koi.
+    target.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') move(e.clientX, e.clientY); });
+
+    // Keyboard: arrow keys or WASD swim a golden lure; Enter or Space feeds.
+    const KEYS = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
+    target.addEventListener('keydown', (e) => {
+      if (e.target !== target) return;
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      if (KEYS[k]) {
+        e.preventDefault();
+        if (!this.lure.on) {
+          this.lure.on = true;
+          if (!this.cursor.active) { this.cursor.x = this.w / 2; this.cursor.y = this.h * 0.62; }
+        }
+        this.lure.keys.add(k);
+        this.emit('keys');
+      } else if (k === 'Enter' || k === ' ' || k === 'f') {
+        e.preventDefault();
+        if (!this.lure.on) { this.lure.on = true; this.cursor.x = this.w / 2; this.cursor.y = this.h * 0.62; }
+        this.cursor.active = true; this.cursor.last = performance.now();
+        this.feed(this.cursor.x, this.cursor.y);
+        this.emit('keys');
+      }
+    });
+    target.addEventListener('keyup', (e) => {
+      const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      this.lure.keys.delete(k);
+    });
+    target.addEventListener('blur', () => { this.lure.keys.clear(); });
+    this.KEYS = KEYS;
+  }
+
+  feed(x, y) {
+    this.addRipple(x, y, 120, 2.6, 0.7);
+    setTimeout(() => this.addRipple(x, y, 70, 2.0, 0.45), 180);
+    this.pellets.push({ x, y, born: performance.now(), eaten: false });
+    this.emit('feed');
+  }
+
+  stepLure(dt, now) {
+    const L = this.lure;
+    let dx = 0, dy = 0;
+    for (const k of L.keys) { const v = this.KEYS[k]; if (v) { dx += v[0]; dy += v[1]; } }
+    const len = Math.hypot(dx, dy);
+    const speed = Math.min(this.w, this.h) * 0.45;
+    if (len) {
+      this.cursor.x = Math.max(20, Math.min(this.w - 20, this.cursor.x + (dx / len) * speed * dt));
+      this.cursor.y = Math.max(20, Math.min(this.h - 20, this.cursor.y + (dy / len) * speed * dt));
+      this.cursor.active = true; this.cursor.last = now;
+      if (now - this.lastRipple > 160) { this.lastRipple = now; this.addRipple(this.cursor.x, this.cursor.y, 34, 1.4, 0.35); }
+    }
+  }
+
+  drawLure() {
+    if (!this.lure.on || !this.cursor.active) return;
+    const c = this.c, { x, y } = this.cursor;
+    const pulse = 1 + Math.sin(this.t * 4) * 0.15;
+    const g = c.createRadialGradient(x, y, 0, x, y, 22 * pulse);
+    g.addColorStop(0, 'rgba(242,200,120,0.55)');
+    g.addColorStop(1, 'rgba(242,200,120,0)');
+    c.fillStyle = g;
+    c.beginPath(); c.arc(x, y, 22 * pulse, 0, TAU); c.fill();
+    c.fillStyle = '#e9c46a';
+    c.beginPath(); c.arc(x, y, 4.5, 0, TAU); c.fill();
   }
 
   on(fn) { this.listeners.push(fn); }
@@ -402,7 +467,13 @@ export class Pond {
 
   step(dt, now) {
     this.t += dt;
-    if (this.cursor.active && now - this.cursor.last > 4000) this.cursor.active = false;
+    this.stepLure(dt, now);
+    if (this.cursor.active && now - this.cursor.last > (this.lure.on ? 12000 : 4000)) this.cursor.active = false;
+    // When nobody is touching the pond, the odd raindrop keeps it alive.
+    if (!this.cursor.active && now - this.lastRain > 2600 && Math.random() < dt * 0.8) {
+      this.lastRain = now;
+      this.addRipple(Math.random() * this.w, Math.random() * this.h, 46, 2.2, 0.3);
+    }
     const ctx = { w: this.w, hgt: this.h, cursor: this.cursor, pellets: this.pellets, school: this.koi };
     for (const k of this.koi) k.update(dt, ctx);
     this.pellets = this.pellets.filter((p) => !p.eaten && now - p.born < 9000);
@@ -478,6 +549,7 @@ export class Pond {
     const sorted = [...this.koi].sort((a, b) => a.depth - b.depth);
     for (const k of sorted) k.draw(this.c);
     this.drawRipples();
+    this.drawLure();
     for (const p of this.pads) p.draw(this.c, this.dusk);
   }
 

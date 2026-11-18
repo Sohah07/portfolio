@@ -28,14 +28,14 @@
   </header>
 
   <!-- 1. The Pond -->
-  <section class="pond" id="top" aria-label="Koi pond">
+  <section class="pond" id="top" tabindex="0" aria-label="Koi pond. Use the arrow keys to guide a lure for the koi, and Enter or Space to feed them. Press Tab to continue to the page.">
     <canvas class="pond-canvas" aria-hidden="true"></canvas>
     <div class="pond-text">
       <p class="eyebrow">hello, I'm</p>
       <h1 class="pond-name" data-wobble>Soha Haldikar</h1>
       <p class="pond-tag" data-wobble>builder · teacher · storyteller</p>
     </div>
-    <p class="pond-hint">move to make ripples · click to feed the koi</p>
+    <p class="pond-hint" aria-hidden="true"><span class="hint-pointer">move or tap to make ripples · click to feed the koi</span><span class="hint-keys">arrow keys guide the koi · enter to feed</span></p>
     <a class="scroll-cue" href="#about" aria-label="Scroll down"><span></span></a>
   </section>
 

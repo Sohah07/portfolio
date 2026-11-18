@@ -25,6 +25,10 @@ duskBtn.addEventListener('click', () => setDusk(root.dataset.theme !== 'dusk'));
 
 if (reduceMotion) pond.paintStill(); else pond.start();
 
+// Keyboard visitors land in the pond, so the arrow keys work straight away.
+if (window.scrollY < 10 && !location.hash) pondEl0().focus({ preventScroll: true });
+function pondEl0() { return document.querySelector('.pond'); }
+
 // Pause the pond when it is off screen.
 new IntersectionObserver(([e]) => {
   if (reduceMotion) return;
