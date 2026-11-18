@@ -372,73 +372,15 @@ $('.screen-cover').addEventListener('click', () => {
 });
 
 /* ---------- 9. Riverside room ---------- */
-// Vinyl: spins and plays a soft placeholder chord until the real song is linked.
+// Vinyl: a click just spins the record (no audio); the playlist link sits below it.
 const vinylNook = $('.vinyl-nook');
 const record = $('.record');
-let audio = null;
-// On the live site the record plays Apple's official 30-second preview of the song,
-// found through the iTunes Search API (JSONP, so it works from a static page).
-// If that isn't reachable, it falls back to a soft ambient chord.
-let preview = null;
-function findPreview() {
-  return new Promise((resolve) => {
-    const cb = 'itunesCb' + Date.now();
-    const s = document.createElement('script');
-    const done = (url) => { delete window[cb]; s.remove(); resolve(url); };
-    window[cb] = (data) => {
-      const hit = (data.results || []).find((r) => /just like heaven/i.test(r.trackName) && /cure/i.test(r.artistName));
-      done(hit?.previewUrl || null);
-    };
-    s.onerror = () => done(null);
-    setTimeout(() => window[cb] && done(null), 4000);
-    s.src = `https://itunes.apple.com/search?term=just+like+heaven+the+cure&entity=song&limit=10&callback=${cb}`;
-    document.head.appendChild(s);
-  });
-}
-record.addEventListener('click', async () => {
+record.addEventListener('click', () => {
   const on = record.getAttribute('aria-pressed') !== 'true';
   record.setAttribute('aria-pressed', String(on));
   vinylNook.classList.toggle('playing', on);
-  $('.now-playing').textContent = on ? '♪ now playing' : 'tap the record';
-  if (!on) { audio?.stop(); audio = null; return; }
-  if (preview === null) preview = (await findPreview()) || false;
-  if (record.getAttribute('aria-pressed') !== 'true') return;
-  if (preview) {
-    const el = new Audio(preview);
-    el.volume = 0.6;
-    el.addEventListener('ended', () => record.click());
-    el.play().catch(() => {});
-    audio = { stop() { el.pause(); } };
-  } else {
-    audio = playPad();
-  }
+  $('.now-playing').textContent = on ? '♪ spinning' : 'tap the record';
 });
-function playPad() {
-  const AC = window.AudioContext || window.webkitAudioContext;
-  if (!AC) return null;
-  const ac = new AC();
-  const master = ac.createGain();
-  master.gain.value = 0;
-  master.gain.linearRampToValueAtTime(0.08, ac.currentTime + 1.5);
-  master.connect(ac.destination);
-  const notes = [220, 277.18, 329.63, 415.3];
-  const oscs = notes.map((f, i) => {
-    const o = ac.createOscillator();
-    o.type = 'sine';
-    o.frequency.value = f;
-    const g = ac.createGain();
-    g.gain.value = 0.25;
-    const lfo = ac.createOscillator(); const lg = ac.createGain();
-    lfo.frequency.value = 0.1 + i * 0.05; lg.gain.value = 0.15;
-    lfo.connect(lg).connect(g.gain); lfo.start();
-    o.connect(g).connect(master); o.start();
-    return [o, lfo];
-  });
-  return { stop() {
-    master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.8);
-    setTimeout(() => { oscs.flat().forEach((o) => o.stop()); ac.close(); }, 900);
-  } };
-}
 
 // Bookshelf
 const BOOKS = [
