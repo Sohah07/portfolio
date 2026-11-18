@@ -332,6 +332,35 @@ $$('.photo').forEach((b) => b.addEventListener('click', () => openSheet(`
   <h3 id="sheet-title">${b.dataset.caption}</h3>
   <img class="full-photo" src="${b.dataset.src}" alt="${b.querySelector('img').alt}" />`)));
 
+// Draw the stream so it flows evenly through every stone, whatever the card heights.
+const streamSvg = $('.stream-path');
+const streamWrap = $('.stream-wrap');
+function drawStream() {
+  // Layout positions (offsetTop/Left) ignore the reveal animation's transforms.
+  const wr = { width: streamWrap.clientWidth, height: streamWrap.clientHeight };
+  const pts = $$('.stone .rock').map((r) => {
+    let x = r.offsetWidth / 2, y = r.offsetHeight / 2, el = r;
+    while (el && el !== streamWrap) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    return [x, y];
+  });
+  if (!pts.length) return;
+  streamSvg.setAttribute('viewBox', `0 0 ${wr.width} ${wr.height}`);
+  const amp = Math.min(46, wr.width * 0.06);
+  let d = `M${pts[0][0]} ${Math.max(0, pts[0][1] - 40)} L${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+    const dir = i % 2 ? 1 : -1;
+    const dy = (y1 - y0) / 3;
+    d += ` C${x0 + amp * dir} ${y0 + dy}, ${x1 + amp * dir} ${y1 - dy}, ${x1} ${y1}`;
+  }
+  const last = pts[pts.length - 1];
+  d += ` L${last[0]} ${last[1] + 40}`;
+  $('path', streamSvg).setAttribute('d', d);
+}
+new ResizeObserver(drawStream).observe($('.stones'));
+addEventListener('resize', drawStream);
+document.fonts?.ready.then(drawStream);
+
 /* ---------- 9. Riverside room ---------- */
 // Vinyl: spins and plays a soft placeholder chord until the real song is linked.
 const vinylNook = $('.vinyl-nook');
@@ -374,10 +403,10 @@ function playPad() {
 // Bookshelf
 const BOOKS = [
   { t: 'Pride and Prejudice', c: '#7b4b5a', h: 168 },
-  { t: 'The Little Prince', c: '#2f5d62', h: 140 },
-  { t: 'Educated', c: '#b4523a', h: 176 },
+  { t: 'The Silent Patient', c: '#2f5d62', h: 162 },
+  { t: 'Normal People', c: '#b4523a', h: 150 },
   { t: 'Atomic Habits', c: '#d9a441', h: 150 },
-  { t: 'The Alchemist', c: '#5f7f6e', h: 160 },
+  { t: 'Anne of Green Gables', c: '#5f7f6e', h: 178 },
   { t: 'Sapiens', c: '#3d4a5c', h: 182 },
 ];
 const shelf = $('.shelf');
