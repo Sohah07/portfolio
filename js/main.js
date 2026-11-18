@@ -468,27 +468,35 @@ cur.style.background = '#5a2230';
 cur.innerHTML = 'The Phantom of the Opera<span class="badge">READING</span>';
 cur.addEventListener('click', () => openBook('The Phantom of the Opera', true));
 shelf.appendChild(cur);
+const AUTHORS = {
+  'Pride and Prejudice': 'Jane Austen', 'The Silent Patient': 'Alex Michaelides', 'Normal People': 'Sally Rooney',
+  'Atomic Habits': 'James Clear', 'Anne of Green Gables': 'L. M. Montgomery', 'Sapiens': 'Yuval Noah Harari',
+  'The Phantom of the Opera': 'Gaston Leroux',
+};
+// Ratings out of 5. Leave a book out to show "rating coming soon".
+const RATINGS = {};
 function openBook(title, current) {
+  const r = RATINGS[title];
+  const stars = r ? '★'.repeat(r) + '☆'.repeat(5 - r) : '';
   openSheet(`
-    <p class="tag">${current ? 'currently reading' : 'a favorite'} · sample</p>
+    <p class="tag">${current ? 'currently reading' : 'a favorite'}</p>
     <h3 id="sheet-title">${title}</h3>
-    <div class="spread">
-      <div><p class="stars">★★★★★</p><p class="ph">Author, year, one line on what it's about.</p></div>
-      <div>Your take goes here, in your own handwriting-style voice: why it stayed with you.</div>
-    </div>`);
+    <p class="by">${AUTHORS[title] || ''}</p>
+    ${current ? '<p class="book-note">Reading it now.</p>'
+      : r ? `<p class="stars big" aria-label="${r} out of 5 stars">${stars}</p>` : '<p class="book-note ph">rating coming soon</p>'}`);
 }
 
 // Cinema reel (duplicated so the strip loops seamlessly)
 const MOVIES = [
-  ['Spirited Away', '#2f5d62', '#a7c4bc'], ['Little Women', '#b4523a', '#e8c5c1'], ['Interstellar', '#1e2a2b', '#5a6f8c'],
-  ['La La Land', '#3d3a73', '#e9a07f'], ['Ratatouille', '#7b4b2a', '#d9a441'], ['Dead Poets Society', '#2f3d2f', '#8fa88a'],
+  ["Breakfast at Tiffany's", '#1e2a2b', '#7fb8b0'], ['10 Things I Hate About You', '#b4523a', '#e8c5c1'],
+  ['Ratatouille', '#7b4b2a', '#d9a441'], ['Mamma Mia!', '#2f5d8a', '#f2d27a'], ['Little Women', '#5f7f6e', '#e8d9c4'],
 ];
 const track = $('.reel-track');
 [...MOVIES, ...MOVIES].forEach(([t, a, b], i) => {
   const f = document.createElement('div');
   f.className = 'frame';
   f.style.background = `linear-gradient(160deg, ${b}, ${a})`;
-  f.innerHTML = `<span class="take">sample take</span>${t}`;
+  f.textContent = t;
   if (i >= MOVIES.length) f.setAttribute('aria-hidden', 'true');
   track.appendChild(f);
 });
