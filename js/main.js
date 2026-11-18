@@ -1,0 +1,475 @@
+import { Pond, Koi } from './pond.js';
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+/* ---------- Theme (dusk mode) ---------- */
+const root = document.documentElement;
+const duskBtn = $('.dusk-toggle');
+let stored = null;
+try { stored = localStorage.getItem('theme'); } catch (e) { /* storage blocked */ }
+const startDusk = stored ? stored === 'dusk' : (root.dataset.theme === 'dark' || matchMedia('(prefers-color-scheme: dark)').matches);
+function setDusk(on) {
+  root.dataset.theme = on ? 'dusk' : 'light';
+  duskBtn.setAttribute('aria-pressed', String(on));
+  if (pond) pond.dusk = on;
+  try { localStorage.setItem('theme', on ? 'dusk' : 'light'); } catch (e) { /* ignore */ }
+}
+
+/* ---------- 1. Pond ---------- */
+const pond = new Pond($('.pond-canvas'), { count: 7 });
+setDusk(startDusk);
+duskBtn.addEventListener('click', () => setDusk(root.dataset.theme !== 'dusk'));
+
+if (reduceMotion) pond.paintStill(); else pond.start();
+
+// Pause the pond when it is off screen.
+new IntersectionObserver(([e]) => {
+  if (reduceMotion) return;
+  e.isIntersecting ? pond.start() : pond.stop();
+}).observe($('.pond'));
+
+// Split the hero text into letters so koi passing beneath make them wobble.
+const letters = [];
+$$('[data-wobble]').forEach((el) => {
+  const text = el.textContent;
+  el.setAttribute('aria-label', text);
+  el.textContent = '';
+  for (const ch of text) {
+    const s = document.createElement('span');
+    s.className = 'ch';
+    s.textContent = ch;
+    s.setAttribute('aria-hidden', 'true');
+    el.appendChild(s);
+    letters.push({ el: s, cx: 0, cy: 0, amt: 0, phase: Math.random() * 6 });
+  }
+});
+function measureLetters() {
+  const pr = $('.pond').getBoundingClientRect();
+  for (const l of letters) {
+    l.el.style.transform = '';
+    const r = l.el.getBoundingClientRect();
+    l.cx = r.left - pr.left + r.width / 2;
+    l.cy = r.top - pr.top + r.height / 2;
+  }
+}
+document.fonts?.ready.then(measureLetters);
+window.addEventListener('resize', measureLetters);
+measureLetters();
+
+if (!reduceMotion) {
+  let last = performance.now();
+  (function wobble(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (pond.running) {
+      for (const l of letters) {
+        let near = 0;
+        for (const k of pond.koi) {
+          for (let i = 0; i < k.n; i += 3) {
+            const p = k.pts[i];
+            const d = Math.hypot(p.x - l.cx, p.y - l.cy);
+            if (d < 70) near = Math.max(near, 1 - d / 70);
+          }
+        }
+        for (const r of pond.ripples) {
+          const ringR = r.max * (1 - (1 - r.age / r.life) ** 3);
+          const d = Math.abs(Math.hypot(r.x - l.cx, r.y - l.cy) - ringR);
+          if (d < 18) near = Math.max(near, (1 - d / 18) * r.strength * 0.8);
+        }
+        l.amt += (near - l.amt) * Math.min(1, dt * 4);
+        l.phase += dt * 5;
+        if (l.amt > 0.01) {
+          const y = Math.sin(l.phase) * 5 * l.amt;
+          const rot = Math.cos(l.phase * 0.8) * 4 * l.amt;
+          l.el.style.transform = `translateY(${y.toFixed(2)}px) rotate(${rot.toFixed(2)}deg) skewX(${(rot * 0.6).toFixed(2)}deg)`;
+          l.el.style.opacity = String(1 - l.amt * 0.25);
+        } else if (l.el.style.transform) {
+          l.el.style.transform = ''; l.el.style.opacity = '';
+        }
+      }
+    }
+    requestAnimationFrame(wobble);
+  })(last);
+}
+
+// Dive: as the hero scrolls away, the pond surface fades into paper.
+const pondEl = $('.pond');
+const topbar = $('.topbar');
+function onScroll() {
+  const h = pondEl.offsetHeight;
+  const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.7)));
+  pondEl.style.setProperty('--dive', p.toFixed(3));
+  topbar.classList.toggle('solid', window.scrollY > h - 70);
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+/* ---------- Guide koi: one koi follows you down the page ---------- */
+const guideCanvas = $('.guide-koi');
+if (!reduceMotion && guideCanvas && getComputedStyle(guideCanvas).display !== 'none') {
+  const gc = guideCanvas.getContext('2d');
+  const guide = new Koi(55, 300, { len: 62, angle: Math.PI / 2, depth: 0.95 });
+  guide.pattern = { base: '#f7f1e8', spots: [['#e07a5f', 0.1, 0, 0.55], ['#e07a5f', 0.45, 0.2, 0.45]] };
+  let lastY = window.scrollY, vel = 0, t = 0, lastT = performance.now();
+  function sizeGuide() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    guideCanvas.width = 110 * dpr; guideCanvas.height = innerHeight * dpr;
+    gc.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  sizeGuide();
+  addEventListener('resize', sizeGuide);
+  (function swim(now) {
+    const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now; t += dt;
+    const visible = window.scrollY > pondEl.offsetHeight * 0.6;
+    guideCanvas.classList.toggle('on', visible);
+    if (visible) {
+      const dy = window.scrollY - lastY; lastY = window.scrollY;
+      vel += (dy / Math.max(dt, 0.001) - vel) * Math.min(1, dt * 3);
+      const ty = innerHeight / 2 + Math.max(-1, Math.min(1, vel / 1200)) * innerHeight * 0.32 + Math.sin(t * 0.5) * 60;
+      const tx = 55 + Math.sin(t * 0.7) * 22;
+      const cursor = { x: tx, y: ty, active: true };
+      guide.bored = 0;
+      guide.update(dt, { w: 110, hgt: innerHeight, cursor, pellets: [], school: [guide] });
+      // Keep it inside the gutter.
+      for (const p of guide.pts) p.x = Math.max(12, Math.min(98, p.x));
+      gc.clearRect(0, 0, 110, innerHeight);
+      guide.draw(gc, false);
+    } else {
+      lastY = window.scrollY;
+    }
+    requestAnimationFrame(swim);
+  })(lastT);
+}
+
+/* ---------- Reveals ---------- */
+const io = new IntersectionObserver((entries) => {
+  for (const e of entries) {
+    if (!e.isIntersecting) continue;
+    e.target.classList.add('in');
+    e.target.dispatchEvent(new CustomEvent('reveal'));
+    io.unobserve(e.target);
+  }
+}, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+const observeReveals = () => $$('.reveal, .reveal-rise').forEach((el) => io.observe(el));
+
+/* ---------- 2. Rotating words ---------- */
+const words = ['builder', 'teacher', 'storyteller', 'researcher', 'reader'];
+const rot = $('.rotator span');
+let wi = 0;
+if (!reduceMotion) {
+  setInterval(() => {
+    rot.classList.add('out');
+    setTimeout(() => { wi = (wi + 1) % words.length; rot.textContent = words[wi]; rot.classList.remove('out'); }, 600);
+  }, 2800);
+}
+
+/* ---------- 3. Count up + GradeFlow demo ---------- */
+$('.khelo').addEventListener('reveal', () => {
+  $$('.stats dt').forEach((dt) => {
+    const end = +dt.dataset.count, suf = dt.dataset.suffix || '';
+    if (reduceMotion) { dt.textContent = end.toLocaleString() + suf; return; }
+    const t0 = performance.now(), dur = 1800;
+    (function tick(now) {
+      const p = Math.min(1, (now - t0) / dur), e = 1 - (1 - p) ** 3;
+      dt.textContent = Math.round(end * e).toLocaleString() + (p === 1 ? suf : '');
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
+});
+
+const gf = $('.gf-demo');
+function runGradeFlow() {
+  const items = $$('.gf-rubric li', gf);
+  gf.classList.remove('done');
+  items.forEach((li) => li.classList.remove('hit', 'miss'));
+  items.forEach((li, i) => setTimeout(() => li.classList.add(+li.dataset.pts > 0 ? 'hit' : 'miss'), 700 + i * 650));
+  setTimeout(() => gf.classList.add('done'), 700 + items.length * 650 + 200);
+}
+$('.gradeflow').addEventListener('reveal', runGradeFlow);
+$('.gf-replay').addEventListener('click', runGradeFlow);
+
+/* ---------- 4. Pebbles (GitHub) ---------- */
+const ICONS = {
+  highlighter: '<path d="M14 46 L34 26 L42 34 L22 54 Z"/><path d="M34 26 L42 18 L50 26 L42 34"/><path class="accent" d="M10 56 H40"/>',
+  lens: '<path d="M14 20 L8 28 L14 36"/><path d="M30 20 L36 28 L30 36"/><circle class="accent" cx="40" cy="38" r="10"/><path class="accent" d="M47 45 L56 54"/>',
+  chunks: '<rect x="10" y="12" width="44" height="10" rx="3"/><rect x="10" y="27" width="32" height="10" rx="3" class="accent"/><rect x="10" y="42" width="40" height="10" rx="3"/>',
+  house: '<path d="M10 32 L32 12 L54 32"/><path d="M16 28 V52 H48 V28"/><path class="accent" d="M26 52 V40 H38 V52"/>',
+  tag: '<path d="M12 12 H34 L54 32 L34 52 L12 30 Z"/><circle class="accent" cx="22" cy="22" r="4"/>',
+  scatter: '<path d="M10 54 H54 M10 54 V10"/><circle cx="18" cy="44" r="2.5"/><circle cx="26" cy="40" r="2.5"/><circle cx="32" cy="30" r="2.5"/><circle cx="42" cy="26" r="2.5"/><circle cx="48" cy="16" r="2.5"/><path class="accent" d="M14 48 L52 14"/>',
+};
+const REPOS = [
+  { name: 'Skimatic', repo: 'Skimatic', lang: 'JavaScript', icon: 'highlighter', tags: ['Chrome extension', 'NLP', 'Accessibility'],
+    desc: 'A Chrome extension that semantically summarizes an article and highlights its key ideas by category, designed to help readers with ADHD or dyslexia.' },
+  { name: 'AI Code Reviewer', repo: 'AI_Code_Reviewer', lang: 'Python', icon: 'lens', tags: ['AST', 'LLM', 'GitHub'],
+    desc: 'Reviews pull requests by pairing AST-based static analysis with LLM reasoning to flag bugs, code smells, security risks and missing tests.' },
+  { name: 'Semantic Chunk Reader', repo: 'semantic-chunk-reader-v2', lang: 'Text & NLP', icon: 'chunks', tags: ['NLP'], unconfirmed: true,
+    desc: 'Breaks long text into meaning-sized chunks so it is easier to read and process.' },
+  { name: 'NYC Airbnb Analysis', repo: 'New-York-AirBnb-Data-Analysis', lang: 'Jupyter', icon: 'house', tags: ['pandas', 'Data viz'], unconfirmed: true,
+    desc: 'Exploratory analysis of New York Airbnb listings: prices, neighbourhoods and what drives demand.' },
+  { name: 'ASOS Analysis', repo: 'Asos-Data-Analysis', lang: 'Jupyter', icon: 'tag', tags: ['pandas', 'Retail'], unconfirmed: true,
+    desc: 'Digging into ASOS product data to find patterns in pricing, categories and customer favourites.' },
+  { name: 'Loan Campaign Model', repo: 'brown-summer-program-', lang: 'Jupyter', icon: 'scatter', tags: ['Regression', 'ML'],
+    desc: 'Built at Brown Pre-College: a linear regression model that predicts who responds to a personal-loan campaign.' },
+];
+const pebbles = $('.pebbles');
+REPOS.forEach((r) => {
+  const url = `https://github.com/Sohah07/${r.repo}`;
+  const el = document.createElement('div');
+  el.className = 'pebble reveal';
+  el.setAttribute('role', 'listitem');
+  el.tabIndex = 0;
+  el.innerHTML = `
+    <div class="face">
+      <svg class="icon" viewBox="0 0 64 64" aria-hidden="true">${ICONS[r.icon]}</svg>
+      <h3>${r.name}</h3><span class="lang">${r.lang}</span>${r.unconfirmed ? '<span class="confirm">description to confirm</span>' : ''}
+    </div>
+    <div class="more">
+      <h3>${r.name}</h3>
+      <p>${r.desc}</p>
+      <div class="tags">${r.tags.map((t) => `<span>${t}</span>`).join('')}</div>
+      <a class="btn visit" href="${url}" target="_blank" rel="noopener">View repo ↗</a>
+    </div>`;
+  const ripple = (x, y) => {
+    const ring = document.createElement('span');
+    ring.className = 'ring';
+    ring.style.setProperty('--rx', x + 'px'); ring.style.setProperty('--ry', y + 'px');
+    el.appendChild(ring);
+    setTimeout(() => ring.remove(), 1300);
+  };
+  const open = (e) => {
+    if (el.classList.contains('open')) return;
+    $$('.pebble.open').forEach((p) => p !== el && p.classList.remove('open'));
+    el.classList.add('open');
+    const rect = el.getBoundingClientRect();
+    ripple(e?.clientX ? e.clientX - rect.left : rect.width / 2, e?.clientY ? e.clientY - rect.top : rect.height / 2);
+  };
+  if (finePointer) {
+    el.addEventListener('mouseenter', open);
+    el.addEventListener('mouseleave', () => el.classList.remove('open'));
+  }
+  el.addEventListener('click', (e) => { if (!e.target.closest('a')) open(e); });
+  el.addEventListener('dblclick', (e) => { if (!e.target.closest('a')) window.open(url, '_blank', 'noopener'); });
+  el.addEventListener('focus', () => open());
+  el.addEventListener('blur', (e) => { if (!el.contains(e.relatedTarget)) el.classList.remove('open'); });
+  el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target === el) window.open(url, '_blank', 'noopener'); });
+  pebbles.appendChild(el);
+});
+
+/* ---------- 5. Research: chain + transparency slider ---------- */
+const chain = $('.chain');
+const hex = () => Math.random().toString(16).slice(2, 6);
+for (let i = 0; i < 6; i++) {
+  const b = document.createElement('span');
+  b.className = 'block';
+  b.textContent = hex();
+  chain.appendChild(b);
+}
+$('.journal').addEventListener('reveal', () => {
+  $$('.block', chain).forEach((b, i) => setTimeout(() => b.classList.add('on'), 300 + i * 260));
+  if (!reduceMotion) setInterval(() => { const bs = $$('.block', chain); bs[Math.floor(Math.random() * bs.length)].textContent = hex(); }, 1400);
+});
+const slider = $('#transparency');
+const levels = ['overview', 'how it works', 'full detail'];
+slider.addEventListener('input', () => {
+  const v = +slider.value;
+  $('#tlevel').textContent = levels[v];
+  $$('.layer').forEach((l) => l.classList.toggle('on', +l.dataset.level <= v));
+});
+
+/* ---------- 6. Learning stream ---------- */
+const STONES = [
+  { when: 'year one', ph: true, title: 'GenWise · Manipal University', take: 'Introduction to AI and machine learning: my first real look under the hood.' },
+  { when: 'year two', ph: true, title: 'GenWise residential internship', take: "Built an algorithm to solve the Rubik's cube.", gold: true },
+  { when: 'Summer 2022', title: 'Boston University Summer Challenge', take: 'Completed August 2022.', phTake: true },
+  { when: 'Jul–Aug 2023', title: 'Brown Pre-College: AI, Data Science & ML', take: 'Built a linear regression model to predict response to a personal-loan campaign; data viz, ML and data science foundations.' },
+  { when: 'Jan 2024', title: 'Inspirit AI Scholars Program', take: 'Awarded to high-performing student leaders worldwide.', phTake: true },
+  { when: 'Feb 2024', title: 'Oxford Scholastica research internship', take: 'Co-authored the OxJournal paper on cryptocurrency and blockchain.', gold: true, link: '#research' },
+  { when: '2024', ph: true, title: 'Girls Who Code Summer Immersion', take: 'Designed interactive role-play games and learned the core ideas of game design.' },
+  { when: 'Spring 2025', title: 'New York Academy of Sciences · Junior Academy', take: 'Team proposal for Hydrolink AI, a transparent and ethical AI framework.', link: '#research' },
+];
+const stones = $('.stones');
+const sheet = $('.sheet');
+const sheetBody = $('.sheet-body');
+function openSheet(html) {
+  sheetBody.innerHTML = html;
+  sheet.showModal();
+}
+$('.sheet-close').addEventListener('click', () => sheet.close());
+sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
+
+STONES.forEach((s) => {
+  const li = document.createElement('li');
+  li.className = 'stone reveal';
+  li.innerHTML = `
+    <span class="when">${s.when}${s.ph ? ' <i class="ph-dot" title="confirm"></i>' : ''}</span>
+    <button class="rock${s.gold ? ' gold' : ''}" type="button" aria-label="Details: ${s.title}"></button>
+    <div class="card"><h3>${s.title}</h3><p class="take">${s.take}</p></div>`;
+  $('.rock', li).addEventListener('click', () => openSheet(`
+    <p class="tag">${s.when}</p>
+    <h3 id="sheet-title">${s.title}</h3>
+    <p>${s.take}</p>
+    ${s.phTake ? '<p class="ph">Add one line on what you learned or made here.</p>' : ''}
+    ${s.link ? `<p><a href="${s.link}" onclick="this.closest('dialog').close()">See the project ↓</a></p>` : ''}
+    <div class="ph-box cert">certificate preview (cropped)</div>`));
+  stones.appendChild(li);
+});
+
+/* ---------- 9. Riverside room ---------- */
+// Vinyl: spins and plays a soft placeholder chord until the real song is linked.
+const vinylNook = $('.vinyl-nook');
+const record = $('.record');
+let audio = null;
+record.addEventListener('click', () => {
+  const on = record.getAttribute('aria-pressed') !== 'true';
+  record.setAttribute('aria-pressed', String(on));
+  vinylNook.classList.toggle('playing', on);
+  $('.now-playing').textContent = on ? '♪ now playing: your favorite song' : 'tap the record';
+  if (on) audio = playPad(); else audio?.stop();
+});
+function playPad() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  const ac = new AC();
+  const master = ac.createGain();
+  master.gain.value = 0;
+  master.gain.linearRampToValueAtTime(0.08, ac.currentTime + 1.5);
+  master.connect(ac.destination);
+  const notes = [220, 277.18, 329.63, 415.3];
+  const oscs = notes.map((f, i) => {
+    const o = ac.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    const g = ac.createGain();
+    g.gain.value = 0.25;
+    const lfo = ac.createOscillator(); const lg = ac.createGain();
+    lfo.frequency.value = 0.1 + i * 0.05; lg.gain.value = 0.15;
+    lfo.connect(lg).connect(g.gain); lfo.start();
+    o.connect(g).connect(master); o.start();
+    return [o, lfo];
+  });
+  return { stop() {
+    master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.8);
+    setTimeout(() => { oscs.flat().forEach((o) => o.stop()); ac.close(); }, 900);
+  } };
+}
+
+// Bookshelf
+const BOOKS = [
+  { t: 'Pride and Prejudice', c: '#7b4b5a', h: 168 },
+  { t: 'The Little Prince', c: '#2f5d62', h: 140 },
+  { t: 'Educated', c: '#b4523a', h: 176 },
+  { t: 'Atomic Habits', c: '#d9a441', h: 150 },
+  { t: 'The Alchemist', c: '#5f7f6e', h: 160 },
+  { t: 'Sapiens', c: '#3d4a5c', h: 182 },
+];
+const shelf = $('.shelf');
+BOOKS.forEach((b) => {
+  const el = document.createElement('button');
+  el.type = 'button';
+  el.className = 'book';
+  el.style.height = b.h + 'px';
+  el.style.background = b.c;
+  el.textContent = b.t;
+  el.setAttribute('role', 'listitem');
+  el.addEventListener('click', () => openBook(b.t, false));
+  shelf.appendChild(el);
+});
+const cur = document.createElement('button');
+cur.type = 'button';
+cur.className = 'book lying';
+cur.style.background = '#9a6b8a';
+cur.innerHTML = 'Klara and the Sun<span class="badge">READING</span>';
+cur.addEventListener('click', () => openBook('Klara and the Sun', true));
+shelf.appendChild(cur);
+function openBook(title, current) {
+  openSheet(`
+    <p class="tag">${current ? 'currently reading' : 'a favorite'} · sample</p>
+    <h3 id="sheet-title">${title}</h3>
+    <div class="spread">
+      <div><p class="stars">★★★★★</p><p class="ph">Author, year, one line on what it's about.</p></div>
+      <div>Your take goes here, in your own handwriting-style voice: why it stayed with you.</div>
+    </div>`);
+}
+
+// Cinema reel (duplicated so the strip loops seamlessly)
+const MOVIES = [
+  ['Spirited Away', '#2f5d62', '#a7c4bc'], ['Little Women', '#b4523a', '#e8c5c1'], ['Interstellar', '#1e2a2b', '#5a6f8c'],
+  ['La La Land', '#3d3a73', '#e9a07f'], ['Ratatouille', '#7b4b2a', '#d9a441'], ['Dead Poets Society', '#2f3d2f', '#8fa88a'],
+];
+const track = $('.reel-track');
+[...MOVIES, ...MOVIES].forEach(([t, a, b], i) => {
+  const f = document.createElement('div');
+  f.className = 'frame';
+  f.style.background = `linear-gradient(160deg, ${b}, ${a})`;
+  f.innerHTML = `<span class="take">sample take</span>${t}`;
+  if (i >= MOVIES.length) f.setAttribute('aria-hidden', 'true');
+  track.appendChild(f);
+});
+
+// Map pins
+const PLACES = [
+  { name: 'Amherst, MA', x: 0.62, y: 0.42, note: 'Home base for college.' },
+  { name: 'Boston, MA', x: 0.78, y: 0.5, note: 'BU Summer Challenge, 2022.' },
+  { name: 'Providence, RI', x: 0.7, y: 0.68, note: 'Brown Pre-College, 2023.' },
+  { name: 'Your favorite place', x: 0.25, y: 0.55, note: 'A photo, one line, and a link to the Instagram post.', ph: true },
+];
+const pins = $('.pins');
+PLACES.forEach((p) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'pin';
+  b.style.left = p.x * 100 + '%';
+  b.style.top = p.y * 100 + '%';
+  b.setAttribute('aria-label', p.name);
+  b.title = p.name;
+  b.addEventListener('click', () => openSheet(`
+    <p class="tag">places</p><h3 id="sheet-title">${p.name}</h3>
+    <div class="ph-box" style="aspect-ratio:16/9">photo</div>
+    <p style="margin-top:1rem">${p.note}</p>
+    <a class="small-link ph-link" href="#" aria-disabled="true">See it on Instagram</a>`));
+  pins.appendChild(b);
+});
+
+// Recommendation form: chips + a ripple when you "drop a stone"
+$$('.chip').forEach((c) => c.addEventListener('click', () => {
+  $$('.chip').forEach((x) => x.setAttribute('aria-checked', String(x === c)));
+}));
+const recs = $('.recs');
+const mini = $('.mini-pond');
+recs.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const txt = $('#rec-text').value.trim();
+  const kind = $('.chip[aria-checked="true"]').textContent;
+  if (!txt) { $('#rec-text').focus(); $('.thanks').textContent = `what ${kind} should I try?`; return; }
+  splash();
+  $('.thanks').textContent = `Thank you! Your ${kind} rec landed in the pond.`;
+  recs.reset();
+  // Demo only: in the real site this posts to a form service (e.g. Formspree) or a small database.
+});
+function splash() {
+  const r = mini.getBoundingClientRect();
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  mini.width = r.width * dpr; mini.height = r.height * dpr;
+  const c = mini.getContext('2d');
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const btn = $('.recs .btn').getBoundingClientRect();
+  const x = btn.left - r.left + btn.width / 2, y = btn.top - r.top + btn.height / 2;
+  const t0 = performance.now();
+  const color = getComputedStyle(root).getPropertyValue('--pond').trim();
+  (function f(now) {
+    const t = Math.min(1, (now - t0) / 2200);
+    c.clearRect(0, 0, r.width, r.height);
+    for (let k = 0; k < 4; k++) {
+      const tt = t - k * 0.09;
+      if (tt <= 0) continue;
+      const rad = (1 - (1 - tt) ** 3) * Math.max(r.width, r.height) * 0.9;
+      c.beginPath(); c.ellipse(x, y, rad, rad * 0.7, 0, 0, Math.PI * 2);
+      c.strokeStyle = color; c.globalAlpha = (1 - tt) * 0.5; c.lineWidth = 1.5; c.stroke();
+    }
+    if (t < 1) requestAnimationFrame(f); else c.clearRect(0, 0, r.width, r.height);
+  })(t0);
+}
+
+observeReveals();
