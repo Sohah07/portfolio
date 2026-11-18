@@ -354,7 +354,7 @@ input[type='range'] { width: 100%; accent-color: var(--coral); margin: 0.5rem 0 
 .reel-nook { grid-column: span 4; }
 .map-nook { grid-column: span 2; }
 .substack-nook { grid-column: span 2; }
-.recs { grid-column: span 4; }
+.recs { grid-column: span 6; }
 @media (max-width: 980px) { .room-grid { grid-template-columns: 1fr 1fr; } .room-grid > * { grid-column: span 2 !important; } }
 @media (min-width: 620px) and (max-width: 980px) { .vinyl-nook, .map-nook, .substack-nook { grid-column: span 1 !important; } }
 

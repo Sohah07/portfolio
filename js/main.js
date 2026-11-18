@@ -311,18 +311,16 @@ STONES.forEach((s) => {
   const li = document.createElement('li');
   li.className = 'stone reveal';
   li.innerHTML = `
-    <span class="when">${s.when}${s.ph ? ' <i class="ph-dot" title="confirm"></i>' : ''}</span>
+    <span class="when">${s.when}</span>
     <button class="rock${s.gold ? ' gold' : ''}" type="button" aria-label="Details: ${s.title}"></button>
     <div class="card"><h3>${s.title}</h3><p class="take">${s.take}</p>${(s.courses || []).filter((c) => c.letter).map((c) => `<a class="letter-link" href="${c.letter}" target="_blank" rel="noopener">${c.letterLabel} ↗</a>`).join('')}</div>`;
   $('.rock', li).addEventListener('click', () => openSheet(`
     <p class="tag">${s.when}</p>
     <h3 id="sheet-title">${s.title}</h3>
     <p>${s.take}</p>
-    ${s.phTake ? '<p class="ph">Add one line on what you learned or made here.</p>' : ''}
     ${s.courses ? `<ul class="courses">${s.courses.map((c) => `<li><h4>${c.name}</h4><p${c.ph ? ' class="ph"' : ''}>${c.note}</p>${c.letter ? `<a class="letter-link" href="${c.letter}" target="_blank" rel="noopener">${c.letterLabel} ↗</a>` : ''}</li>`).join('')}</ul>` : ''}
     ${s.quote ? `<blockquote>${s.quote.replace(/" (.*)$/, '"<cite>$1</cite>')}</blockquote>` : ''}
-    ${s.link ? `<p><a href="${s.link}" onclick="this.closest('dialog').close()">See the project ↓</a></p>` : ''}
-    <div class="ph-box cert">certificate preview (cropped)</div>`));
+    ${s.link ? `<p><a href="${s.link}" onclick="this.closest('dialog').close()">See the project ↓</a></p>` : ''}`));
   stones.appendChild(li);
 });
 
@@ -415,7 +413,7 @@ const AUTHORS = {
   'Atomic Habits': 'James Clear', 'Anne of Green Gables': 'L. M. Montgomery', 'Sapiens': 'Yuval Noah Harari',
   'The Phantom of the Opera': 'Gaston Leroux',
 };
-// Ratings out of 5. Leave a book out to show "rating coming soon".
+// Ratings out of 5. Books left out show no rating.
 const RATINGS = {};
 function openBook(title, current) {
   const r = RATINGS[title];
@@ -425,7 +423,7 @@ function openBook(title, current) {
     <h3 id="sheet-title">${title}</h3>
     <p class="by">${AUTHORS[title] || ''}</p>
     ${current ? '<p class="book-note">Reading it now.</p>'
-      : r ? `<p class="stars big" aria-label="${r} out of 5 stars">${stars}</p>` : '<p class="book-note ph">rating coming soon</p>'}`);
+      : r ? `<p class="stars big" aria-label="${r} out of 5 stars">${stars}</p>` : ''}`);
 }
 
 // Cinema reel (duplicated so the strip loops seamlessly)
@@ -477,10 +475,13 @@ recs.addEventListener('submit', (e) => {
   const txt = $('#rec-text').value.trim();
   const kind = $('.chip[aria-checked="true"]').textContent;
   if (!txt) { $('#rec-text').focus(); $('.thanks').textContent = `what ${kind} should I try?`; return; }
+  const from = $('#rec-name').value.trim();
   splash();
-  $('.thanks').textContent = `Thank you! Your ${kind} rec landed in the pond.`;
+  // A static site can't store messages, so the rec opens as a pre-filled email.
+  const body = `My ${kind} recommendation: ${txt}` + (from ? `\n\nFrom: ${from}` : '');
+  location.href = `mailto:shaldikar@umass.edu?subject=${encodeURIComponent(`A ${kind} recommendation for you`)}&body=${encodeURIComponent(body)}`;
+  $('.thanks').textContent = `Thank you! Send the email that just opened and your ${kind} rec lands in my pond.`;
   recs.reset();
-  // Demo only: in the real site this posts to a form service (e.g. Formspree) or a small database.
 });
 function splash() {
   const r = mini.getBoundingClientRect();
