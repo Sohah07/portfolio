@@ -317,22 +317,26 @@ export class Pond {
     this.listeners = [];
     this.resize();
     window.addEventListener('resize', () => this.resize());
+    // Catch size changes that don't fire a window resize (e.g. an embedded preview that lays out late).
+    if ('ResizeObserver' in window) new ResizeObserver(() => { this.resize(); if (!this.running && this.w) this.draw(); }).observe(canvas);
     if (interactive) this.bind();
   }
 
   resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const r = this.canvas.getBoundingClientRect();
-    const oldW = this.w || r.width, oldH = this.h || r.height;
-    this.w = r.width; this.h = r.height;
     this.canvas.width = Math.round(r.width * dpr);
     this.canvas.height = Math.round(r.height * dpr);
     this.c.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (!this.koi.length) {
+    if (r.width < 10 || r.height < 10) return; // not laid out yet (or hidden); keep the last good size
+    const oldW = this.w || r.width, oldH = this.h || r.height;
+    this.w = r.width; this.h = r.height;
+    if (!this.koi.length || this.koi.some((k) => !Number.isFinite(k.pts[0].x + k.pts[0].y))) {
+      this.koi = [];
       const small = this.w < 640;
       const n = small ? Math.max(4, this.count - 2) : this.count;
       for (let i = 0; i < n; i++) {
-        this.koi.push(new Koi(rand(120, this.w - 120), rand(120, this.h - 120), {
+        this.koi.push(new Koi(rand(Math.min(120, this.w / 3), Math.max(this.w - 120, this.w * 2 / 3)), rand(Math.min(120, this.h / 3), Math.max(this.h - 120, this.h * 2 / 3)), {
           len: small ? rand(55, 80) : rand(75, 115),
           pattern: PATTERNS[i % PATTERNS.length],
         }));
@@ -458,8 +462,9 @@ export class Pond {
       if (!this.running) return;
       const dt = Math.min(0.05, (now - this.prev) / 1000);
       this.prev = now;
-      this.step(dt, now);
-      this.raf = requestAnimationFrame(loop);
+      this.raf = requestAnimationFrame(loop); // schedule first, so one bad frame can't stop the pond
+      if (!this.w) { this.resize(); return; }
+      try { this.step(dt, now); } catch (e) { console.warn('pond frame skipped', e); }
     };
     this.raf = requestAnimationFrame(loop);
   }

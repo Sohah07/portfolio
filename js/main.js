@@ -1,4 +1,4 @@
-import { Pond, Koi } from './pond.js';
+import { Pond, Koi } from './pond.js?v=19';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
