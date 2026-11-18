@@ -279,11 +279,12 @@ slider.addEventListener('input', () => {
 const STONES = [
   { when: 'year one', ph: true, title: 'GenWise · Manipal University', take: 'Introduction to AI and machine learning: my first real look under the hood.' },
   { when: 'year two', ph: true, title: 'GenWise residential internship', take: "Built an algorithm to solve the Rubik's cube.", gold: true },
-  { when: 'Summer 2022', title: 'Boston University Summer Challenge', take: 'Two courses: Economics, and Business from the Ground Up, where I led my team from product idea to an investor pitch.',
+  { when: 'Summer 2022', title: 'Boston University Summer Challenge', take: 'Two courses: Economics, where I studied game theory, and Business from the Ground Up, where I led my team from product idea to an investor pitch.',
     courses: [
       { name: 'Business from the Ground Up', note: 'Led Team 4 from a product concept (Butter Booster by Cook-chen) through costs, sales forecasting and break-even to a draft business plan pitched to "investors". I built the financials and the newspaper ad.',
         letter: 'assets/letters/bu-business-from-the-ground-up.pdf', letterLabel: "Read Professor Anastasi's evaluation" },
-      { name: 'Economics', note: 'Add one line on what you learned.', ph: true },
+      { name: 'Economics', note: 'A two-week dive into game theory: Nash equilibria, sequential and repeated games, social choice and Arrow\'s Impossibility Theorem. My group\'s final presentation explored International Economics.',
+        letter: 'assets/letters/bu-economics.pdf', letterLabel: "Read Professor Porter's evaluation" },
     ],
     quote: '"You are an innovator, contributing great ideas, challenging conventional wisdom with thoughtfulness and creativity." Professor Tom Anastasi, Questrom School of Business' },
   { when: 'Jul–Aug 2023', title: 'Brown Pre-College: AI, Data Science & ML', take: 'Built a linear regression model to predict response to a personal-loan campaign; data viz, ML and data science foundations.' },
