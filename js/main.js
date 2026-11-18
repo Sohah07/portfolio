@@ -203,7 +203,7 @@ const ICONS = {
   scatter: '<path d="M10 54 H54 M10 54 V10"/><circle cx="18" cy="44" r="2.5"/><circle cx="26" cy="40" r="2.5"/><circle cx="32" cy="30" r="2.5"/><circle cx="42" cy="26" r="2.5"/><circle cx="48" cy="16" r="2.5"/><path class="accent" d="M14 48 L52 14"/>',
 };
 const REPOS = [
-  { name: 'Skimatic', repo: 'Skimatic', lang: 'JavaScript', icon: 'highlighter', tags: ['Chrome extension', 'NLP', 'Accessibility'],
+  { name: 'Skimatic', repo: 'Skimatic', lang: 'Hackathon project · JavaScript', icon: 'highlighter', tags: ['Hackathon', 'Chrome extension', 'Accessibility'],
     desc: 'A Chrome extension that semantically summarizes an article and highlights its key ideas by category, designed to help readers with ADHD or dyslexia.' },
   { name: 'AI Code Reviewer', repo: 'AI_Code_Reviewer', lang: 'Python', icon: 'lens', tags: ['AST', 'LLM', 'GitHub'],
     desc: 'Reviews pull requests by pairing AST-based static analysis with LLM reasoning to flag bugs, code smells, security risks and missing tests.' },
