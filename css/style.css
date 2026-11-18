@@ -145,6 +145,7 @@ main > section { padding: clamp(72px, 11vw, 140px) clamp(16px, 6vw, 96px); max-w
   background: linear-gradient(160deg, var(--jade-soft), var(--jade));
   box-shadow: var(--shadow);
 }
+.headshot-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .headshot-placeholder { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font: italic 1.1rem/1.4 var(--serif); color: var(--pond); }
 .caustics {
   position: absolute; inset: -20%;
@@ -183,7 +184,11 @@ main > section { padding: clamp(72px, 11vw, 140px) clamp(16px, 6vw, 96px); max-w
 .sub-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 1rem 1.2rem; margin-bottom: 1rem; }
 .sub-card h4 { font-size: 1.05rem; margin-bottom: 0.3rem; }
 .sub-card p { margin: 0; font-size: 0.95rem; color: var(--ink-soft); }
-.photo-strip { min-height: 90px; }
+.photo-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.photo { padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 5; box-shadow: var(--shadow); }
+.photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease), filter 1.2s var(--ease); filter: saturate(0.9); }
+.photo:hover img, .photo:focus-visible img { transform: scale(1.05); filter: none; }
+.sheet .full-photo { width: 100%; border-radius: 12px; margin-top: 0.4rem; }
 
 .gf-demo { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 1.4rem; box-shadow: var(--shadow); position: relative; }
 .gf-answer { background: var(--paper-2); border-radius: 14px; padding: 0.9rem 1rem; margin-bottom: 1rem; transition: transform 0.8s var(--ease), opacity 0.8s; }
@@ -369,7 +374,7 @@ input[type='range'] { width: 100%; accent-color: var(--coral); margin: 0.5rem 0 
 .book:hover, .book:focus-visible { transform: rotate(180deg) translateY(22px); box-shadow: inset -3px 0 0 rgba(0, 0, 0, 0.12), 0 -10px 20px -10px rgba(0, 0, 0, 0.4); }
 .book.current { transform: rotate(180deg); }
 .book .badge { position: absolute; bottom: -2px; left: 50%; translate: -50% 0; writing-mode: horizontal-tb; transform: rotate(180deg); font: 600 0.55rem var(--sans); letter-spacing: 0.1em; background: var(--gold); color: var(--ink); padding: 2px 4px; border-radius: 3px; white-space: nowrap; }
-.book.lying { writing-mode: horizontal-tb; transform: none; height: 30px !important; width: 140px; align-self: flex-end; margin-left: auto; display: grid; place-items: center; }
+.book.lying { writing-mode: horizontal-tb; transform: none; height: 30px !important; width: auto; padding: 0 14px; align-self: flex-end; margin-left: auto; display: grid; place-items: center; }
 .book.lying:hover { transform: translateY(-6px); }
 .book.lying .badge { transform: none; bottom: auto; top: -10px; left: auto; right: 8px; translate: 0; }
 .shelf-plank { height: 14px; background: linear-gradient(#b48a64, #8c6646); border-radius: 3px; box-shadow: 0 10px 18px -10px rgba(0, 0, 0, 0.5); }

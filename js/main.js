@@ -326,6 +326,12 @@ STONES.forEach((s) => {
   stones.appendChild(li);
 });
 
+// Khelo Science photos open larger.
+$$('.photo').forEach((b) => b.addEventListener('click', () => openSheet(`
+  <p class="tag">Khelo Science</p>
+  <h3 id="sheet-title">${b.dataset.caption}</h3>
+  <img class="full-photo" src="${b.dataset.src}" alt="${b.querySelector('img').alt}" />`)));
+
 /* ---------- 9. Riverside room ---------- */
 // Vinyl: spins and plays a soft placeholder chord until the real song is linked.
 const vinylNook = $('.vinyl-nook');
@@ -389,9 +395,9 @@ BOOKS.forEach((b) => {
 const cur = document.createElement('button');
 cur.type = 'button';
 cur.className = 'book lying';
-cur.style.background = '#9a6b8a';
-cur.innerHTML = 'Klara and the Sun<span class="badge">READING</span>';
-cur.addEventListener('click', () => openBook('Klara and the Sun', true));
+cur.style.background = '#5a2230';
+cur.innerHTML = 'The Phantom of the Opera<span class="badge">READING</span>';
+cur.addEventListener('click', () => openBook('The Phantom of the Opera', true));
 shelf.appendChild(cur);
 function openBook(title, current) {
   openSheet(`
