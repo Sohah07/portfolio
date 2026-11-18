@@ -213,7 +213,7 @@ main > section { padding: clamp(72px, 11vw, 140px) clamp(16px, 6vw, 96px); max-w
 
 /* ---------- 4. Built (pebbles) ---------- */
 .pebbles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 22px; }
-@media (max-width: 560px) { .pebbles { grid-template-columns: 1fr 1fr; gap: 12px; } .pebble { padding: 0.6rem; } .pebble .icon { width: 44px; height: 44px; } .pebble h3 { font-size: 0.98rem; } .pebble .more { font-size: 0.82rem; padding: 1rem; } }
+@media (max-width: 560px) { .pebbles { grid-template-columns: minmax(0, 1fr); gap: 14px; } .pebble { aspect-ratio: 1.55; } .pebble .icon { width: 48px; height: 48px; } .pebble .more { font-size: 0.86rem; padding: 1.1rem 1.4rem; } }
 .pebble {
   position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 42% 58% 52% 48% / 50% 44% 56% 50%;
   aspect-ratio: 1.15; display: grid; place-items: center; text-align: center; cursor: pointer; padding: 1.2rem;
