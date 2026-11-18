@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soha Haldikar</title>
+  <meta name="description" content="Soha Haldikar: builder, teacher and storyteller. Projects, research, programs and the things I love." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Caveat:wght@500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <a class="skip" href="#about">Skip to content</a>
+
+  <header class="topbar" aria-label="Site">
+    <a class="mark" href="#top" aria-label="Back to the pond">SH</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#started">Projects</a>
+      <a href="#research">Research</a>
+      <a href="#stream">Journey</a>
+      <a href="#lead">Leadership</a>
+      <a href="#room">Say hi</a>
+    </nav>
+    <button class="dusk-toggle" type="button" aria-pressed="false" aria-label="Toggle dusk mode">
+      <span class="sun" aria-hidden="true"></span>
+    </button>
+  </header>
+
+  <!-- 1. The Pond -->
+  <section class="pond" id="top" tabindex="0" aria-label="Koi pond. Use the arrow keys to guide a lure for the koi, and Enter or Space to feed them. Press Tab to continue to the page.">
+    <canvas class="pond-canvas" aria-hidden="true"></canvas>
+    <div class="pond-text">
+      <p class="eyebrow">hello, I'm</p>
+      <h1 class="pond-name" data-wobble>Soha Haldikar</h1>
+      <p class="pond-tag" data-wobble>builder · teacher · storyteller</p>
+    </div>
+    <p class="pond-hint" aria-hidden="true"><span class="hint-pointer">move or tap to make ripples · click to feed the koi</span><span class="hint-keys">arrow keys guide the koi · enter to feed</span></p>
+    <a class="scroll-cue" href="#about" aria-label="Scroll down"><span></span></a>
+  </section>
+
+  <canvas class="guide-koi" aria-hidden="true"></canvas>
+
+  <main>
+    <!-- 2. Surfacing -->
+    <section class="surfacing" id="about">
+      <div class="headshot reveal-rise">
+        <div class="headshot-frame">
+          <div class="headshot-placeholder">your headshot<br />rises here</div>
+          <div class="caustics" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="about-copy reveal">
+        <p class="eyebrow">surfacing</p>
+        <h2>I like building things that <em>teach</em>.</h2>
+        <p class="lede">From science kits for kids to AI tools that help people read and learn, most of what I make sits where technology meets people. <span class="ph">Placeholder intro: your "who I am" paragraph goes here.</span></p>
+        <p class="words">I'm a <span class="rotator" aria-live="polite"><span>builder</span></span></p>
+        <ul class="currently">
+          <li><span>studying</span>Computer Science, UMass Amherst <i class="ph-dot" title="confirm"></i></li>
+          <li><span>building</span>Skimatic &amp; GradeFlow</li>
+          <li><span>reading</span><i class="ph">your current book</i></li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 30 C 240 0 480 60 720 30 S 1200 0 1440 30" /></svg></div>
+
+    <!-- 3. Things I started -->
+    <section class="started" id="started">
+      <header class="section-head reveal">
+        <p class="eyebrow">things I started</p>
+        <h2>Passion projects</h2>
+      </header>
+
+      <article class="feature khelo reveal">
+        <div class="khelo-logo">
+          <svg class="orbit" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="88" /></svg>
+          <img src="assets/khelo-science-logo.png" alt="Khelo Science logo" />
+        </div>
+        <div class="feature-copy">
+          <p class="tag">Co-founder</p>
+          <h3>Khelo Science</h3>
+          <p>Science should be something you play with. I co-founded Khelo Science and ran a fundraiser that put hands-on activity kits into classrooms, then led the workshops myself.</p>
+          <dl class="stats">
+            <div><dt data-count="20">0</dt><dd>schools reached</dd></div>
+            <div><dt data-count="20">0</dt><dd>workshops led</dd></div>
+            <div><dt data-count="1000" data-suffix="+">0</dt><dd>students</dd></div>
+          </dl>
+          <div class="sub-card">
+            <h4>Teaching thread</h4>
+            <p>Designed a 5-week Intro to Computer Science workshop for 60+ fourth graders, built around interactive science stories.</p>
+          </div>
+          <div class="photo-strip ph-box">workshop photo strip</div>
+        </div>
+      </article>
+
+      <article class="feature gradeflow reveal">
+        <div class="gf-demo" aria-label="GradeFlow demo animation">
+          <div class="gf-answer"><span class="gf-label">student answer</span><p>Photosynthesis turns light energy into chemical energy stored in glucose, releasing oxygen.</p></div>
+          <ul class="gf-rubric">
+            <li data-pts="2">Names the energy conversion</li>
+            <li data-pts="2">Mentions glucose</li>
+            <li data-pts="1">Mentions oxygen</li>
+            <li data-pts="0">Mentions chlorophyll</li>
+          </ul>
+          <div class="gf-grade"><span>grade</span><strong>5<small>/6</small></strong></div>
+          <button class="gf-replay" type="button">replay</button>
+        </div>
+        <div class="feature-copy">
+          <p class="tag">Builder · with a mentor</p>
+          <h3>GradeFlow</h3>
+          <p>A platform that grades student work against a teacher's rubric automatically. It connects Google Sheets with an AI model, so teachers keep their workflow and get consistent, explained scores back.</p>
+          <p class="private-note"><span class="lock" aria-hidden="true"></span> Private repo for now · demo on request</p>
+        </div>
+      </article>
+    </section>
+
+    <!-- 4. Things I built -->
+    <section class="built" id="built">
+      <header class="section-head reveal">
+        <p class="eyebrow">things I built</p>
+        <h2>From my GitHub</h2>
+        <p class="hint">Hover or tap a pebble to open it. Double-click (or use the button) to visit the repo.</p>
+      </header>
+      <div class="pebbles" role="list"></div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 30 C 240 60 480 0 720 30 S 1200 60 1440 30" /></svg></div>
+
+    <!-- 5. Research -->
+    <section class="research" id="research">
+      <header class="section-head reveal">
+        <p class="eyebrow">research</p>
+        <h2>Published &amp; proposed</h2>
+      </header>
+      <div class="research-grid">
+        <article class="journal reveal">
+          <div class="chain" aria-hidden="true"></div>
+          <p class="tag">OxJournal · Computer Science · April 3, 2024</p>
+          <h3>Cryptocurrency and Blockchain Technology</h3>
+          <p class="authors">Soha Haldikar, Alexis Limary &amp; Bathandwa Senoamali</p>
+          <p>How blockchains stay secure through decentralisation, hashing and consensus, what cryptocurrency does well and badly, and where central bank digital currencies and DeFi may take it next. Written during the Oxford Scholastica research internship.</p>
+          <blockquote>"Her inventive approach added an extra layer of depth." <cite>Research mentor <i class="ph-dot" title="confirm before publishing"></i></cite></blockquote>
+          <a class="btn" href="https://www.oxjournal.org/cryptocurrency-and-blockchain-technology/" target="_blank" rel="noopener">Read the paper</a>
+        </article>
+
+        <article class="hydro reveal">
+          <p class="tag">New York Academy of Sciences · Junior Academy · Spring 2025</p>
+          <h3>Hydrolink AI</h3>
+          <p class="authors">Team of five</p>
+          <label class="slider-label" for="transparency">Transparency <output id="tlevel">overview</output></label>
+          <input id="transparency" type="range" min="0" max="2" step="1" value="0" />
+          <div class="layers">
+            <p class="layer on" data-level="0">A proposal for a Transparent AI Framework that keeps people thinking critically instead of over-relying on AI.</p>
+            <p class="layer" data-level="1">It lets users choose how much of the model's reasoning they see, maps decisions as interactive decision trees, and traces answers back to their data sources.</p>
+            <p class="layer" data-level="2">An ethics and community dashboard flags bias and suggests fixes, while prompt recommendations help everyone use AI equally well, aimed at education, finance and media.</p>
+          </div>
+          <a class="btn ghost ph-link" href="#" aria-disabled="true">Proposal link coming</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. The learning stream -->
+    <section class="stream" id="stream">
+      <header class="section-head reveal">
+        <p class="eyebrow">the learning stream</p>
+        <h2>Programs &amp; courses</h2>
+        <p class="hint">Each stone is a program. Hover for the takeaway, click for details.</p>
+      </header>
+      <div class="stream-wrap">
+        <svg class="stream-path" viewBox="0 0 200 1000" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M100 0 C 40 120, 160 220, 100 340 S 40 560, 100 680 S 160 880, 100 1000" />
+        </svg>
+        <ol class="stones"></ol>
+      </div>
+    </section>
+
+    <!-- 7. Stories I told -->
+    <section class="stories" id="stories">
+      <header class="section-head reveal">
+        <p class="eyebrow">stories I told</p>
+        <h2>Stanford Daily multimedia</h2>
+      </header>
+      <div class="cinema reveal">
+        <div class="letterbox">
+          <button class="play" type="button" aria-label="Play video (placeholder)"></button>
+          <p>Interviewing an Ironman athlete</p>
+          <span class="ph">video embed goes here (YouTube or Vimeo)</span>
+        </div>
+        <div class="stills">
+          <div class="ph-box">still</div><div class="ph-box">still</div><div class="ph-box">still</div>
+        </div>
+        <p class="caption">Stanford Daily Tech &amp; Multimedia Workshop: video editing, narrative building, and a feature submitted to the Daily.</p>
+      </div>
+    </section>
+
+    <div class="divider" aria-hidden="true"><svg viewBox="0 0 1440 60" preserveAspectRatio="none"><path d="M0 30 C 240 0 480 60 720 30 S 1200 0 1440 30" /></svg></div>
+
+    <!-- 8. Where I lead now -->
+    <section class="lead" id="lead">
+      <header class="section-head reveal">
+        <p class="eyebrow">where I lead now</p>
+        <h2>Leadership at UMass</h2>
+      </header>
+      <article class="dkd reveal">
+        <h3>Delta Kappa Delta</h3>
+        <p>Three roles, each one built on the trust earned in the last.</p>
+        <ol class="steps">
+          <li><span class="n">01</span><strong>Director of Internal &amp; External Affairs</strong></li>
+          <li><span class="n">02</span><strong>Recruitment Advisor</strong></li>
+          <li><span class="n">03</span><strong>Treasurer</strong><em>current</em></li>
+        </ol>
+      </article>
+      <div class="lead-cards">
+        <article class="reveal"><p class="tag">Events Coordinator</p><h3>Multicultural Greek Council</h3><p class="ph">One line on the events you run.</p></article>
+        <article class="reveal"><p class="tag">Treasurer</p><h3>UMass Game Dev Club</h3><p class="ph">One line on what the club builds.</p></article>
+      </div>
+    </section>
+
+    <!-- 9. The riverside room -->
+    <section class="room" id="room">
+      <header class="section-head reveal">
+        <p class="eyebrow">the riverside room</p>
+        <h2>Off the clock</h2>
+        <p class="hint">Sample items for now; your real favorites go here.</p>
+      </header>
+
+      <div class="room-grid">
+        <!-- Vinyl -->
+        <div class="nook vinyl-nook reveal">
+          <div class="turntable">
+            <button class="record" type="button" aria-label="Play favorite song" aria-pressed="false">
+              <span class="label">fav<br />song</span>
+            </button>
+            <div class="tonearm" aria-hidden="true"></div>
+          </div>
+          <p class="nook-title">On repeat</p>
+          <p class="now-playing" aria-live="polite">tap the record</p>
+          <a class="small-link ph-link" href="#" aria-disabled="true">Open my Apple Music playlist</a>
+        </div>
+
+        <!-- Bookshelf -->
+        <div class="nook shelf-nook reveal">
+          <div class="shelf" role="list"></div>
+          <div class="shelf-plank" aria-hidden="true"></div>
+          <p class="nook-title">The shelf</p>
+          <p class="nook-sub">hover to pull a book · click to read my take</p>
+        </div>
+
+        <!-- Cinema reel -->
+        <div class="nook reel-nook reveal">
+          <div class="reel" aria-label="Favorite movies"><div class="reel-track"></div></div>
+          <p class="nook-title">Now showing</p>
+          <p class="nook-sub">hover a frame to light it up</p>
+        </div>
+
+        <!-- Map -->
+        <div class="nook map-nook reveal">
+          <svg class="map" viewBox="0 0 320 200" aria-label="Places I've been">
+            <path class="land" d="M20 120 C 40 60, 110 40, 160 70 S 260 40, 300 90 S 260 180, 180 170 S 40 190, 20 120 Z" />
+            <path class="river" d="M40 140 C 100 120, 140 150, 200 120 S 270 110, 300 100" />
+          </svg>
+          <div class="pins"></div>
+          <p class="nook-title">Places</p>
+          <p class="nook-sub">click a pin</p>
+        </div>
+
+        <!-- Substack -->
+        <div class="nook substack-nook reveal">
+          <p class="nook-title">Notes from the pond</p>
+          <ul class="posts">
+            <li><span class="date">soon</span><span class="ph">Your latest Substack post</span></li>
+            <li><span class="date">soon</span><span class="ph">Pulled in automatically from RSS</span></li>
+          </ul>
+        </div>
+
+        <!-- Recommendation -->
+        <form class="nook recs reveal" novalidate>
+          <p class="nook-title">Leave me a recommendation</p>
+          <div class="chips" role="radiogroup" aria-label="Type">
+            <button type="button" role="radio" aria-checked="true" class="chip">book</button>
+            <button type="button" role="radio" aria-checked="false" class="chip">song</button>
+            <button type="button" role="radio" aria-checked="false" class="chip">place</button>
+            <button type="button" role="radio" aria-checked="false" class="chip">food</button>
+          </div>
+          <label class="sr" for="rec-text">Your recommendation</label>
+          <input id="rec-text" type="text" placeholder="what should I try?" autocomplete="off" />
+          <label class="sr" for="rec-name">Your name (optional)</label>
+          <input id="rec-name" type="text" placeholder="from (optional)" autocomplete="off" />
+          <button class="btn" type="submit">Drop a stone in the pond</button>
+          <canvas class="mini-pond" aria-hidden="true"></canvas>
+          <p class="thanks" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="foot-line">Thanks for wandering downstream.</p>
+    <nav class="foot-links" aria-label="Elsewhere">
+      <a href="https://github.com/Sohah07" target="_blank" rel="noopener">GitHub</a>
+      <a class="ph-link" href="#" aria-disabled="true">LinkedIn</a>
+      <a class="ph-link" href="#" aria-disabled="true">Instagram</a>
+      <a class="ph-link" href="#" aria-disabled="true">Email</a>
+      <a class="ph-link" href="#" aria-disabled="true">Résumé</a>
+    </nav>
+    <p class="fine">Demo build · placeholders are shown with dashed outlines</p>
+  </footer>
+
+  <!-- Dialog used by stones, books and pins -->
+  <dialog class="sheet" aria-labelledby="sheet-title">
+    <button class="sheet-close" type="button" aria-label="Close">×</button>
+    <div class="sheet-body"></div>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
