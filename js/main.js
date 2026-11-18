@@ -288,7 +288,7 @@ const STONES = [
     ],
     quote: '"You are an innovator, contributing great ideas, challenging conventional wisdom with thoughtfulness and creativity." Professor Tom Anastasi, Questrom School of Business' },
   { when: 'Jul–Aug 2023', title: 'Brown Pre-College: AI, Data Science & ML', take: 'Built a linear regression model to predict response to a personal-loan campaign; data viz, ML and data science foundations.' },
-  { when: 'Jan 2024', title: 'Inspirit AI Scholars Program', take: 'Awarded to high-performing student leaders worldwide.', phTake: true },
+  { when: 'Jan 2024', title: 'Inspirit AI Scholars Program', take: 'Learned data analysis and the foundations of AI; completed as an AI Scholar, a program for high-performing student leaders worldwide.' },
   { when: 'Feb 2024', title: 'Oxford Scholastica research internship', take: 'Co-authored the OxJournal paper on cryptocurrency and blockchain.', gold: true, link: '#research' },
   { when: '2024', ph: true, title: 'Girls Who Code Summer Immersion', take: 'Designed interactive role-play games and learned the core ideas of game design.' },
   { when: 'Spring 2025', title: 'New York Academy of Sciences · Junior Academy', take: 'Team proposal for Hydrolink AI, a transparent and ethical AI framework.', link: '#research' },
