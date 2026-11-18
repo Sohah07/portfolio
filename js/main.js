@@ -361,6 +361,16 @@ new ResizeObserver(drawStream).observe($('.stones'));
 addEventListener('resize', drawStream);
 document.fonts?.ready.then(drawStream);
 
+// Stanford Daily video: the cover starts it, native controls take over after.
+const screen = $('.screen');
+const sdVideo = $('#sd-video');
+$('.screen-cover').addEventListener('click', () => {
+  screen.classList.add('playing');
+  sdVideo.controls = true;
+  sdVideo.play().catch(() => {});
+  sdVideo.focus();
+});
+
 /* ---------- 9. Riverside room ---------- */
 // Vinyl: spins and plays a soft placeholder chord until the real song is linked.
 const vinylNook = $('.vinyl-nook');

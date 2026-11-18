@@ -313,6 +313,20 @@ input[type='range'] { width: 100%; accent-color: var(--coral); margin: 0.5rem 0 
 .stills .ph-box { border-color: rgba(236, 228, 212, 0.2); color: #a9b5b0; aspect-ratio: 16 / 10; min-height: 0; }
 .caption { margin: 0; color: #a9b5b0; font-size: 0.92rem; }
 
+.screen { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 12px; overflow: hidden; background: #000; }
+.screen video { width: 100%; height: 100%; display: block; object-fit: contain; background: #000; }
+.screen-cover {
+  position: absolute; inset: 0; border: 0; cursor: pointer; color: #ece4d4; display: grid; place-content: center; gap: 0.6rem; text-align: center;
+  background: linear-gradient(to top, rgba(8, 12, 13, 0.75), rgba(8, 12, 13, 0.15) 60%), url('../assets/video/stanford-daily-poster.jpg') center / cover;
+  transition: opacity 0.8s var(--ease);
+}
+.screen-cover .play { display: block; }
+.screen-cover:hover .play { transform: scale(1.08); background: rgba(236, 228, 212, 0.12); }
+.screen-title { font: italic clamp(1.4rem, 3.4vw, 2.4rem)/1.1 var(--serif); }
+.screen-sub { font-size: 0.85rem; color: #c9d1cd; letter-spacing: 0.04em; }
+.screen.playing .screen-cover { opacity: 0; pointer-events: none; }
+.stills img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 10px; filter: saturate(0.85); }
+
 /* ---------- 8. Lead ---------- */
 .dkd { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: clamp(1.4rem, 3vw, 2.4rem); box-shadow: var(--shadow); margin-bottom: 24px; }
 .dkd > p { color: var(--ink-soft); }

@@ -184,15 +184,22 @@
         <h2>Stanford Daily multimedia</h2>
       </header>
       <div class="cinema reveal">
-        <div class="letterbox">
-          <button class="play" type="button" aria-label="Play video (placeholder)"></button>
-          <p>Interviewing an Ironman athlete</p>
-          <span class="ph">your video file plays here</span>
+        <div class="screen">
+          <video id="sd-video" preload="none" playsinline poster="assets/video/stanford-daily-poster.jpg">
+            <source src="assets/video/stanford-daily.mp4" type="video/mp4" />
+          </video>
+          <button class="screen-cover" type="button" aria-label="Play Overcoming the Odds, about 8 minutes">
+            <span class="play" aria-hidden="true"></span>
+            <span class="screen-title">Overcoming the Odds</span>
+            <span class="screen-sub">A glimpse into Aryaan's Ironman journey · 8 min</span>
+          </button>
         </div>
         <div class="stills">
-          <div class="ph-box">still</div><div class="ph-box">still</div><div class="ph-box">still</div>
+          <img src="assets/video/still-140.jpg" alt="Aryaan answering questions over a video call" loading="lazy" />
+          <img src="assets/video/still-400.jpg" alt="Aryaan outdoors, mid-training" loading="lazy" />
+          <img src="assets/video/still-75.jpg" alt="Aryaan at home, preparing a meal" loading="lazy" />
         </div>
-        <p class="caption">Stanford Daily Tech &amp; Multimedia Workshop: video editing, narrative building, and a feature submitted to the Daily.</p>
+        <p class="caption">For my final project at the Stanford Daily Tech &amp; Multimedia Workshop, I interviewed my cousin Aryaan Pandit about his road to finishing the 2022 Ironman in Australia. I cut 48 minutes of footage down to 8 in iMovie, and learned the hardest part of storytelling: choosing what to leave out.</p>
       </div>
     </section>
 
