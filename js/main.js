@@ -1,4 +1,4 @@
-import { Pond, Koi } from './pond.js';
+import { Pond, Koi } from './pond.js?v=19';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -203,14 +203,14 @@ const ICONS = {
   scatter: '<path d="M10 54 H54 M10 54 V10"/><circle cx="18" cy="44" r="2.5"/><circle cx="26" cy="40" r="2.5"/><circle cx="32" cy="30" r="2.5"/><circle cx="42" cy="26" r="2.5"/><circle cx="48" cy="16" r="2.5"/><path class="accent" d="M14 48 L52 14"/>',
 };
 const REPOS = [
-  { name: 'Skimatic', repo: 'Skimatic', lang: 'JavaScript', icon: 'highlighter', tags: ['Chrome extension', 'NLP', 'Accessibility'],
+  { name: 'Skimatic', repo: 'Skimatic', lang: 'Hackathon project · JavaScript', icon: 'highlighter', tags: ['Hackathon', 'Chrome extension', 'Accessibility'],
     desc: 'A Chrome extension that semantically summarizes an article and highlights its key ideas by category, designed to help readers with ADHD or dyslexia.' },
   { name: 'AI Code Reviewer', repo: 'AI_Code_Reviewer', lang: 'Python', icon: 'lens', tags: ['AST', 'LLM', 'GitHub'],
     desc: 'Reviews pull requests by pairing AST-based static analysis with LLM reasoning to flag bugs, code smells, security risks and missing tests.' },
-  { name: 'NYC Airbnb Analysis', repo: 'New-York-AirBnb-Data-Analysis', lang: 'Jupyter', icon: 'house', tags: ['pandas', 'Data viz'], unconfirmed: true,
-    desc: 'Exploratory analysis of New York Airbnb listings: prices, neighbourhoods and what drives demand.' },
-  { name: 'ASOS Analysis', repo: 'Asos-Data-Analysis', lang: 'Jupyter', icon: 'tag', tags: ['pandas', 'Retail'], unconfirmed: true,
-    desc: 'Digging into ASOS product data to find patterns in pricing, categories and customer favourites.' },
+  { name: 'NYC Airbnb Analysis', repo: 'New-York-AirBnb-Data-Analysis', lang: 'Jupyter', icon: 'house', tags: ['pandas', 'Geospatial', 'Data viz'],
+    desc: 'Manhattan is priciest, especially for entire homes and hotel rooms. Listings with more reviews tend to cost less, and no single factor explains price on its own.' },
+  { name: 'ASOS Analysis', repo: 'Asos-Data-Analysis', lang: 'Jupyter', icon: 'tag', tags: ['pandas', 'Pricing', 'Inventory'],
+    desc: 'A brand strategy analysis found higher-priced brands like Mango that keep selling out, losing revenue to demand that inventory is not meeting.' },
   { name: 'Loan Campaign Model', repo: 'brown-summer-program-', lang: 'Jupyter', icon: 'scatter', tags: ['Regression', 'ML'],
     desc: 'Built at Brown Pre-College: a linear regression model that predicts who responds to a personal-loan campaign.' },
 ];
@@ -311,67 +311,82 @@ STONES.forEach((s) => {
   const li = document.createElement('li');
   li.className = 'stone reveal';
   li.innerHTML = `
-    <span class="when">${s.when}${s.ph ? ' <i class="ph-dot" title="confirm"></i>' : ''}</span>
+    <span class="when">${s.when}</span>
     <button class="rock${s.gold ? ' gold' : ''}" type="button" aria-label="Details: ${s.title}"></button>
     <div class="card"><h3>${s.title}</h3><p class="take">${s.take}</p>${(s.courses || []).filter((c) => c.letter).map((c) => `<a class="letter-link" href="${c.letter}" target="_blank" rel="noopener">${c.letterLabel} ↗</a>`).join('')}</div>`;
   $('.rock', li).addEventListener('click', () => openSheet(`
     <p class="tag">${s.when}</p>
     <h3 id="sheet-title">${s.title}</h3>
     <p>${s.take}</p>
-    ${s.phTake ? '<p class="ph">Add one line on what you learned or made here.</p>' : ''}
     ${s.courses ? `<ul class="courses">${s.courses.map((c) => `<li><h4>${c.name}</h4><p${c.ph ? ' class="ph"' : ''}>${c.note}</p>${c.letter ? `<a class="letter-link" href="${c.letter}" target="_blank" rel="noopener">${c.letterLabel} ↗</a>` : ''}</li>`).join('')}</ul>` : ''}
     ${s.quote ? `<blockquote>${s.quote.replace(/" (.*)$/, '"<cite>$1</cite>')}</blockquote>` : ''}
-    ${s.link ? `<p><a href="${s.link}" onclick="this.closest('dialog').close()">See the project ↓</a></p>` : ''}
-    <div class="ph-box cert">certificate preview (cropped)</div>`));
+    ${s.link ? `<p><a href="${s.link}" onclick="this.closest('dialog').close()">See the project ↓</a></p>` : ''}`));
   stones.appendChild(li);
 });
 
+// Khelo Science photos open larger.
+$$('.photo').forEach((b) => b.addEventListener('click', () => openSheet(`
+  <p class="tag">Khelo Science</p>
+  <h3 id="sheet-title">${b.dataset.caption}</h3>
+  <img class="full-photo" src="${b.dataset.src}" alt="${b.querySelector('img').alt}" />`)));
+
+// Draw the stream so it flows evenly through every stone, whatever the card heights.
+const streamSvg = $('.stream-path');
+const streamWrap = $('.stream-wrap');
+function drawStream() {
+  // Layout positions (offsetTop/Left) ignore the reveal animation's transforms.
+  const wr = { width: streamWrap.clientWidth, height: streamWrap.clientHeight };
+  const pts = $$('.stone .rock').map((r) => {
+    let x = r.offsetWidth / 2, y = r.offsetHeight / 2, el = r;
+    while (el && el !== streamWrap) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    return [x, y];
+  });
+  if (!pts.length) return;
+  streamSvg.setAttribute('viewBox', `0 0 ${wr.width} ${wr.height}`);
+  const amp = Math.min(46, wr.width * 0.06);
+  let d = `M${pts[0][0]} ${Math.max(0, pts[0][1] - 40)} L${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+    const dir = i % 2 ? 1 : -1;
+    const dy = (y1 - y0) / 3;
+    d += ` C${x0 + amp * dir} ${y0 + dy}, ${x1 + amp * dir} ${y1 - dy}, ${x1} ${y1}`;
+  }
+  const last = pts[pts.length - 1];
+  d += ` L${last[0]} ${last[1] + 40}`;
+  $('path', streamSvg).setAttribute('d', d);
+}
+new ResizeObserver(drawStream).observe($('.stones'));
+addEventListener('resize', drawStream);
+document.fonts?.ready.then(drawStream);
+
+// Stanford Daily video: the cover starts it, native controls take over after.
+const screen = $('.screen');
+const sdVideo = $('#sd-video');
+$('.screen-cover').addEventListener('click', () => {
+  screen.classList.add('playing');
+  sdVideo.controls = true;
+  sdVideo.play().catch(() => {});
+  sdVideo.focus();
+});
+
 /* ---------- 9. Riverside room ---------- */
-// Vinyl: spins and plays a soft placeholder chord until the real song is linked.
+// Vinyl: a click just spins the record (no audio); the playlist link sits below it.
 const vinylNook = $('.vinyl-nook');
 const record = $('.record');
-let audio = null;
 record.addEventListener('click', () => {
   const on = record.getAttribute('aria-pressed') !== 'true';
   record.setAttribute('aria-pressed', String(on));
   vinylNook.classList.toggle('playing', on);
-  $('.now-playing').textContent = on ? '♪ now playing: your favorite song' : 'tap the record';
-  if (on) audio = playPad(); else audio?.stop();
+  $('.now-playing').textContent = on ? '♪ spinning' : 'tap the record';
 });
-function playPad() {
-  const AC = window.AudioContext || window.webkitAudioContext;
-  if (!AC) return null;
-  const ac = new AC();
-  const master = ac.createGain();
-  master.gain.value = 0;
-  master.gain.linearRampToValueAtTime(0.08, ac.currentTime + 1.5);
-  master.connect(ac.destination);
-  const notes = [220, 277.18, 329.63, 415.3];
-  const oscs = notes.map((f, i) => {
-    const o = ac.createOscillator();
-    o.type = 'sine';
-    o.frequency.value = f;
-    const g = ac.createGain();
-    g.gain.value = 0.25;
-    const lfo = ac.createOscillator(); const lg = ac.createGain();
-    lfo.frequency.value = 0.1 + i * 0.05; lg.gain.value = 0.15;
-    lfo.connect(lg).connect(g.gain); lfo.start();
-    o.connect(g).connect(master); o.start();
-    return [o, lfo];
-  });
-  return { stop() {
-    master.gain.linearRampToValueAtTime(0, ac.currentTime + 0.8);
-    setTimeout(() => { oscs.flat().forEach((o) => o.stop()); ac.close(); }, 900);
-  } };
-}
 
 // Bookshelf
 const BOOKS = [
   { t: 'Pride and Prejudice', c: '#7b4b5a', h: 168 },
-  { t: 'The Little Prince', c: '#2f5d62', h: 140 },
-  { t: 'Educated', c: '#b4523a', h: 176 },
+  { t: 'The Silent Patient', c: '#2f5d62', h: 162 },
+  { t: 'Normal People', c: '#b4523a', h: 150 },
   { t: 'Atomic Habits', c: '#d9a441', h: 150 },
-  { t: 'The Alchemist', c: '#5f7f6e', h: 160 },
+  { t: 'Anne of Green Gables', c: '#5f7f6e', h: 178 },
   { t: 'Sapiens', c: '#3d4a5c', h: 182 },
 ];
 const shelf = $('.shelf');
@@ -389,56 +404,63 @@ BOOKS.forEach((b) => {
 const cur = document.createElement('button');
 cur.type = 'button';
 cur.className = 'book lying';
-cur.style.background = '#9a6b8a';
-cur.innerHTML = 'Klara and the Sun<span class="badge">READING</span>';
-cur.addEventListener('click', () => openBook('Klara and the Sun', true));
+cur.style.background = '#5a2230';
+cur.innerHTML = 'The Phantom of the Opera<span class="badge">READING</span>';
+cur.addEventListener('click', () => openBook('The Phantom of the Opera', true));
 shelf.appendChild(cur);
+const AUTHORS = {
+  'Pride and Prejudice': 'Jane Austen', 'The Silent Patient': 'Alex Michaelides', 'Normal People': 'Sally Rooney',
+  'Atomic Habits': 'James Clear', 'Anne of Green Gables': 'L. M. Montgomery', 'Sapiens': 'Yuval Noah Harari',
+  'The Phantom of the Opera': 'Gaston Leroux',
+};
+// Ratings out of 5. Books left out show no rating.
+const RATINGS = {};
 function openBook(title, current) {
+  const r = RATINGS[title];
+  const stars = r ? '★'.repeat(r) + '☆'.repeat(5 - r) : '';
   openSheet(`
-    <p class="tag">${current ? 'currently reading' : 'a favorite'} · sample</p>
+    <p class="tag">${current ? 'currently reading' : 'a favorite'}</p>
     <h3 id="sheet-title">${title}</h3>
-    <div class="spread">
-      <div><p class="stars">★★★★★</p><p class="ph">Author, year, one line on what it's about.</p></div>
-      <div>Your take goes here, in your own handwriting-style voice: why it stayed with you.</div>
-    </div>`);
+    <p class="by">${AUTHORS[title] || ''}</p>
+    ${current ? '<p class="book-note">Reading it now.</p>'
+      : r ? `<p class="stars big" aria-label="${r} out of 5 stars">${stars}</p>` : ''}`);
 }
 
 // Cinema reel (duplicated so the strip loops seamlessly)
 const MOVIES = [
-  ['Spirited Away', '#2f5d62', '#a7c4bc'], ['Little Women', '#b4523a', '#e8c5c1'], ['Interstellar', '#1e2a2b', '#5a6f8c'],
-  ['La La Land', '#3d3a73', '#e9a07f'], ['Ratatouille', '#7b4b2a', '#d9a441'], ['Dead Poets Society', '#2f3d2f', '#8fa88a'],
+  ["Breakfast at Tiffany's", '#1e2a2b', '#7fb8b0'], ['10 Things I Hate About You', '#b4523a', '#e8c5c1'],
+  ['Ratatouille', '#7b4b2a', '#d9a441'], ['Mamma Mia!', '#2f5d8a', '#f2d27a'], ['Little Women', '#5f7f6e', '#e8d9c4'],
 ];
 const track = $('.reel-track');
 [...MOVIES, ...MOVIES].forEach(([t, a, b], i) => {
   const f = document.createElement('div');
   f.className = 'frame';
   f.style.background = `linear-gradient(160deg, ${b}, ${a})`;
-  f.innerHTML = `<span class="take">sample take</span>${t}`;
+  f.textContent = t;
   if (i >= MOVIES.length) f.setAttribute('aria-hidden', 'true');
   track.appendChild(f);
 });
 
 // Map pins
 const PLACES = [
-  { name: 'Amherst, MA', x: 0.62, y: 0.42, note: 'Home base for college.' },
-  { name: 'Boston, MA', x: 0.78, y: 0.5, note: 'BU Summer Challenge, 2022.' },
-  { name: 'Providence, RI', x: 0.7, y: 0.68, note: 'Brown Pre-College, 2023.' },
-  { name: 'Your favorite place', x: 0.25, y: 0.55, note: 'A photo, one line, and a link to the Instagram post.', ph: true },
+  { name: 'Goa, India', x: 0.25, y: 0.55, tag: 'my favorite place', note: 'Golden-hour sunsets over the Arabian Sea.', photo: 'assets/photos/goa.jpg', alt: 'Sunset reflecting on the sea in Goa', fav: true },
+  { name: 'Boston, MA', x: 0.78, y: 0.5, tag: 'places', note: 'My first winter: a frozen Public Garden lagoon.', photo: 'assets/photos/boston-winter.jpg', alt: 'The frozen lagoon in the Boston Public Garden on a clear winter day' },
+  { name: 'Amherst, MA', x: 0.62, y: 0.42, tag: 'places', note: 'Home base for college.', photo: 'assets/photos/amherst.jpg', alt: 'The UMass Amherst campus pond and fountain with the Old Chapel tower behind it' },
+  { name: 'New York City', x: 0.5, y: 0.78, tag: 'places', note: 'My first trip to NYC.', photo: 'assets/photos/nyc.jpg', alt: 'The main concourse of Grand Central Terminal under its painted constellation ceiling' },
 ];
 const pins = $('.pins');
 PLACES.forEach((p) => {
   const b = document.createElement('button');
   b.type = 'button';
-  b.className = 'pin';
+  b.className = 'pin' + (p.fav ? ' fav' : '');
   b.style.left = p.x * 100 + '%';
   b.style.top = p.y * 100 + '%';
   b.setAttribute('aria-label', p.name);
   b.title = p.name;
   b.addEventListener('click', () => openSheet(`
-    <p class="tag">places</p><h3 id="sheet-title">${p.name}</h3>
-    <div class="ph-box" style="aspect-ratio:16/9">photo</div>
-    <p style="margin-top:1rem">${p.note}</p>
-    <a class="small-link ph-link" href="#" aria-disabled="true">See it on Instagram</a>`));
+    <p class="tag">${p.tag}</p><h3 id="sheet-title">${p.name}</h3>
+    ${p.photo ? `<img class="full-photo place-photo" src="${p.photo}" alt="${p.alt}" />` : ''}
+    <p style="margin-top:1rem">${p.note}</p>`));
   pins.appendChild(b);
 });
 
@@ -453,10 +475,13 @@ recs.addEventListener('submit', (e) => {
   const txt = $('#rec-text').value.trim();
   const kind = $('.chip[aria-checked="true"]').textContent;
   if (!txt) { $('#rec-text').focus(); $('.thanks').textContent = `what ${kind} should I try?`; return; }
+  const from = $('#rec-name').value.trim();
   splash();
-  $('.thanks').textContent = `Thank you! Your ${kind} rec landed in the pond.`;
+  // A static site can't store messages, so the rec opens as a pre-filled email.
+  const body = `My ${kind} recommendation: ${txt}` + (from ? `\n\nFrom: ${from}` : '');
+  location.href = `mailto:shaldikar@umass.edu?subject=${encodeURIComponent(`A ${kind} recommendation for you`)}&body=${encodeURIComponent(body)}`;
+  $('.thanks').textContent = `Thank you! Send the email that just opened and your ${kind} rec lands in my pond.`;
   recs.reset();
-  // Demo only: in the real site this posts to a form service (e.g. Formspree) or a small database.
 });
 function splash() {
   const r = mini.getBoundingClientRect();

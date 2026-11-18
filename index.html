@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Caveat:wght@500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=19" />
 </head>
 <body>
   <a class="skip" href="#about">Skip to content</a>
@@ -33,7 +33,7 @@
     <div class="pond-text">
       <p class="eyebrow">hello, I'm</p>
       <h1 class="pond-name" data-wobble>Soha Haldikar</h1>
-      <p class="pond-tag" data-wobble>builder · teacher · storyteller</p>
+      <p class="pond-tag" data-wobble>builder · explorer · storyteller</p>
     </div>
     <p class="pond-hint" aria-hidden="true"><span class="hint-pointer">move or tap to make ripples · click to feed the koi</span><span class="hint-keys">arrow keys guide the koi · enter to feed</span></p>
     <a class="scroll-cue" href="#about" aria-label="Scroll down"><span></span></a>
@@ -46,19 +46,20 @@
     <section class="surfacing" id="about">
       <div class="headshot reveal-rise">
         <div class="headshot-frame">
-          <div class="headshot-placeholder">your headshot<br />rises here</div>
+          <img class="headshot-img" src="assets/photos/headshot.jpg" alt="Portrait of Soha Haldikar" width="872" height="1090" />
           <div class="caustics" aria-hidden="true"></div>
         </div>
       </div>
       <div class="about-copy reveal">
         <p class="eyebrow">surfacing</p>
-        <h2>I like building things that <em>teach</em>.</h2>
-        <p class="lede">From science kits for kids to AI tools that help people read and learn, most of what I make sits where technology meets people. <span class="ph">Placeholder intro: your "who I am" paragraph goes here.</span></p>
+        <h2>I build things that <em>help</em>.</h2>
+        <p class="lede">I enjoy using technology to build things that help others. I'm especially drawn to edtech, and lately I've been getting into quant finance. I'm excited to see where that takes me.</p>
         <p class="words">I'm a <span class="rotator" aria-live="polite"><span>builder</span></span></p>
         <ul class="currently">
-          <li><span>studying</span>Computer Science, UMass Amherst <i class="ph-dot" title="confirm"></i></li>
-          <li><span>building</span>Skimatic &amp; GradeFlow</li>
-          <li><span>reading</span><i class="ph">your current book</i></li>
+          <li><span>studying</span>Computer Science, UMass Amherst</li>
+          <li><span>building</span>GradeFlow</li>
+          <li><span>exploring</span>Quant finance</li>
+          <li><span>reading</span>The Phantom of the Opera</li>
         </ul>
       </div>
     </section>
@@ -82,15 +83,19 @@
           <h3>Khelo Science</h3>
           <p>Science should be something you play with. I co-founded Khelo Science and ran a fundraiser that put hands-on activity kits into classrooms, then led the workshops myself.</p>
           <dl class="stats">
-            <div><dt data-count="20">0</dt><dd>schools reached</dd></div>
+            <div><dt data-count="8">0</dt><dd>schools reached</dd></div>
             <div><dt data-count="20">0</dt><dd>workshops led</dd></div>
             <div><dt data-count="1000" data-suffix="+">0</dt><dd>students</dd></div>
           </dl>
           <div class="sub-card">
             <h4>Teaching thread</h4>
-            <p>Designed a 5-week Intro to Computer Science workshop for 60+ fourth graders, built around interactive science stories.</p>
+            <p>Designed a 5-week Intro to Computer Science workshop for 60+ fourth graders, built around interactive activities.</p>
           </div>
-          <div class="photo-strip ph-box">workshop photo strip</div>
+          <div class="photo-strip" role="list" aria-label="Khelo Science workshop photos">
+            <button type="button" class="photo" role="listitem" data-src="assets/photos/khelo-1.jpg" data-caption="Students working through math puzzle sheets"><img src="assets/photos/khelo-1.jpg" alt="Students sitting on the floor solving math puzzle worksheets" loading="lazy" /></button>
+            <button type="button" class="photo" role="listitem" data-src="assets/photos/khelo-2.jpg" data-caption="Leading a card game with a group of young students"><img src="assets/photos/khelo-2.jpg" alt="Soha leading a card game with young students gathered around a striped rug" loading="lazy" /></button>
+            <button type="button" class="photo" role="listitem" data-src="assets/photos/khelo-3.jpg" data-caption="A dice-and-notebook math game in a circle"><img src="assets/photos/khelo-3.jpg" alt="Students in a circle with notebooks playing a dice math game" loading="lazy" /></button>
+          </div>
         </div>
       </article>
 
@@ -140,7 +145,7 @@
           <h3>Cryptocurrency and Blockchain Technology</h3>
           <p class="authors">Soha Haldikar, Alexis Limary &amp; Bathandwa Senoamali</p>
           <p>How blockchains stay secure through decentralisation, hashing and consensus, what cryptocurrency does well and badly, and where central bank digital currencies and DeFi may take it next. Written during the Oxford Scholastica research internship.</p>
-          <blockquote>"Her inventive approach added an extra layer of depth." <cite>Research mentor <i class="ph-dot" title="confirm before publishing"></i></cite></blockquote>
+          <blockquote>"Her inventive approach added an extra layer of depth." <cite>Research mentor</cite></blockquote>
           <a class="btn" href="https://www.oxjournal.org/cryptocurrency-and-blockchain-technology/" target="_blank" rel="noopener">Read the paper</a>
         </article>
 
@@ -155,7 +160,6 @@
             <p class="layer" data-level="1">It lets users choose how much of the model's reasoning they see, maps decisions as interactive decision trees, and traces answers back to their data sources.</p>
             <p class="layer" data-level="2">An ethics and community dashboard flags bias and suggests fixes, while prompt recommendations help everyone use AI equally well, aimed at education, finance and media.</p>
           </div>
-          <a class="btn ghost ph-link" href="#" aria-disabled="true">Proposal link coming</a>
         </article>
       </div>
     </section>
@@ -168,9 +172,7 @@
         <p class="hint">Each stone is a program. Hover for the takeaway, click for details.</p>
       </header>
       <div class="stream-wrap">
-        <svg class="stream-path" viewBox="0 0 200 1000" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M100 0 C 40 120, 160 220, 100 340 S 40 560, 100 680 S 160 880, 100 1000" />
-        </svg>
+        <svg class="stream-path" aria-hidden="true"><path /></svg>
         <ol class="stones"></ol>
       </div>
     </section>
@@ -182,15 +184,22 @@
         <h2>Stanford Daily multimedia</h2>
       </header>
       <div class="cinema reveal">
-        <div class="letterbox">
-          <button class="play" type="button" aria-label="Play video (placeholder)"></button>
-          <p>Interviewing an Ironman athlete</p>
-          <span class="ph">video embed goes here (YouTube or Vimeo)</span>
+        <div class="screen">
+          <video id="sd-video" preload="none" playsinline poster="assets/video/stanford-daily-poster.jpg">
+            <source src="assets/video/stanford-daily.mp4" type="video/mp4" />
+          </video>
+          <button class="screen-cover" type="button" aria-label="Play Overcoming the Odds, about 8 minutes">
+            <span class="play" aria-hidden="true"></span>
+            <span class="screen-title">Overcoming the Odds</span>
+            <span class="screen-sub">A glimpse into Aryaan's Ironman journey · 8 min</span>
+          </button>
         </div>
         <div class="stills">
-          <div class="ph-box">still</div><div class="ph-box">still</div><div class="ph-box">still</div>
+          <img src="assets/video/still-140.jpg" alt="Aryaan answering questions over a video call" loading="lazy" />
+          <img src="assets/video/still-400.jpg" alt="Aryaan outdoors, mid-training" loading="lazy" />
+          <img src="assets/video/still-75.jpg" alt="Aryaan at home, preparing a meal" loading="lazy" />
         </div>
-        <p class="caption">Stanford Daily Tech &amp; Multimedia Workshop: video editing, narrative building, and a feature submitted to the Daily.</p>
+        <p class="caption">For my final project at the Stanford Daily Tech &amp; Multimedia Workshop, I interviewed my cousin Aryaan Pandit about his road to finishing the 2022 Ironman in Australia. I cut 48 minutes of footage down to 8 in iMovie, and learned the hardest part of storytelling: choosing what to leave out.</p>
       </div>
     </section>
 
@@ -212,8 +221,8 @@
         </ol>
       </article>
       <div class="lead-cards">
-        <article class="reveal"><p class="tag">Events Coordinator</p><h3>Multicultural Greek Council</h3><p class="ph">One line on the events you run.</p></article>
-        <article class="reveal"><p class="tag">Treasurer</p><h3>UMass Game Dev Club</h3><p class="ph">One line on what the club builds.</p></article>
+        <article class="reveal"><p class="tag">Events Coordinator</p><h3>Multicultural Greek Council</h3><p>Planning council-wide events like Neo Night and the MGC Formal that bring the multicultural Greek community together.</p></article>
+        <article class="reveal"><p class="tag">Treasurer</p><h3>UMass Game Dev Club</h3><p>Introducing beginners to game development and teaching them how the games industry works.</p></article>
       </div>
     </section>
 
@@ -222,21 +231,22 @@
       <header class="section-head reveal">
         <p class="eyebrow">the riverside room</p>
         <h2>Off the clock</h2>
-        <p class="hint">Sample items for now; your real favorites go here.</p>
+        <p class="hint">A few of my favorite things.</p>
       </header>
 
       <div class="room-grid">
         <!-- Vinyl -->
         <div class="nook vinyl-nook reveal">
           <div class="turntable">
-            <button class="record" type="button" aria-label="Play favorite song" aria-pressed="false">
-              <span class="label">fav<br />song</span>
+            <button class="record" type="button" aria-label="Spin the record" aria-pressed="false">
+              <span class="label">The<br />Cure</span>
             </button>
             <div class="tonearm" aria-hidden="true"></div>
           </div>
           <p class="nook-title">On repeat</p>
+          <p class="song">Just Like Heaven <span>· The Cure</span></p>
           <p class="now-playing" aria-live="polite">tap the record</p>
-          <a class="small-link ph-link" href="#" aria-disabled="true">Open my Apple Music playlist</a>
+          <a class="small-link" href="https://music.apple.com/us/playlist/on-repeat/pl.u-jV89bojTDBlyjLX" target="_blank" rel="noopener">Open my playlist on Apple Music ↗</a>
         </div>
 
         <!-- Bookshelf -->
@@ -244,7 +254,7 @@
           <div class="shelf" role="list"></div>
           <div class="shelf-plank" aria-hidden="true"></div>
           <p class="nook-title">The shelf</p>
-          <p class="nook-sub">hover to pull a book · click to read my take</p>
+          <p class="nook-sub">hover to pull a book</p>
         </div>
 
         <!-- Cinema reel -->
@@ -263,15 +273,6 @@
           <div class="pins"></div>
           <p class="nook-title">Places</p>
           <p class="nook-sub">click a pin</p>
-        </div>
-
-        <!-- Substack -->
-        <div class="nook substack-nook reveal">
-          <p class="nook-title">Notes from the pond</p>
-          <ul class="posts">
-            <li><span class="date">soon</span><span class="ph">Your latest Substack post</span></li>
-            <li><span class="date">soon</span><span class="ph">Pulled in automatically from RSS</span></li>
-          </ul>
         </div>
 
         <!-- Recommendation -->
@@ -299,12 +300,10 @@
     <p class="foot-line">Thanks for wandering downstream.</p>
     <nav class="foot-links" aria-label="Elsewhere">
       <a href="https://github.com/Sohah07" target="_blank" rel="noopener">GitHub</a>
-      <a class="ph-link" href="#" aria-disabled="true">LinkedIn</a>
-      <a class="ph-link" href="#" aria-disabled="true">Instagram</a>
-      <a class="ph-link" href="#" aria-disabled="true">Email</a>
-      <a class="ph-link" href="#" aria-disabled="true">Résumé</a>
+      <a href="https://www.linkedin.com/in/soha-haldikar/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://www.instagram.com/sohah_07/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:shaldikar@umass.edu">Email</a>
     </nav>
-    <p class="fine">Demo build · placeholders are shown with dashed outlines</p>
   </footer>
 
   <!-- Dialog used by stones, books and pins -->
@@ -313,6 +312,6 @@
     <div class="sheet-body"></div>
   </dialog>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/main.js?v=19"></script>
 </body>
 </html>
