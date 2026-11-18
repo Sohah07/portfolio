@@ -463,3 +463,5 @@ input[type='range'] { width: 100%; accent-color: var(--coral); margin: 0.5rem 0 
 .sheet .by { font: italic 1.05rem var(--serif); color: var(--ink-soft); margin-top: -0.2rem; }
 .sheet .stars.big { font-size: 1.8rem; letter-spacing: 0.15em; margin: 0.6rem 0 0; }
 .sheet .book-note { font: 500 1.25rem var(--hand); color: var(--pond); margin: 0.6rem 0 0; }
+.sheet .place-photo { max-height: 60vh; object-fit: cover; }
+.pin.fav::before { background: var(--gold); }

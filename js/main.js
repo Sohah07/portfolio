@@ -503,25 +503,24 @@ const track = $('.reel-track');
 
 // Map pins
 const PLACES = [
-  { name: 'Amherst, MA', x: 0.62, y: 0.42, note: 'Home base for college.' },
-  { name: 'Boston, MA', x: 0.78, y: 0.5, note: 'BU Summer Challenge, 2022.' },
-  { name: 'Providence, RI', x: 0.7, y: 0.68, note: 'Brown Pre-College, 2023.' },
-  { name: 'Your favorite place', x: 0.25, y: 0.55, note: 'A photo, one line, and a link to the Instagram post.', ph: true },
+  { name: 'Goa, India', x: 0.25, y: 0.55, tag: 'my favorite place', note: 'Golden-hour sunsets over the Arabian Sea.', photo: 'assets/photos/goa.jpg', alt: 'Sunset reflecting on the sea in Goa', fav: true },
+  { name: 'Boston, MA', x: 0.78, y: 0.5, tag: 'places', note: 'My first winter: a frozen Public Garden lagoon.', photo: 'assets/photos/boston-winter.jpg', alt: 'The frozen lagoon in the Boston Public Garden on a clear winter day' },
+  { name: 'Amherst, MA', x: 0.62, y: 0.42, tag: 'places', note: 'Home base for college.' },
+  { name: 'Providence, RI', x: 0.7, y: 0.68, tag: 'places', note: 'Brown Pre-College, 2023.' },
 ];
 const pins = $('.pins');
 PLACES.forEach((p) => {
   const b = document.createElement('button');
   b.type = 'button';
-  b.className = 'pin';
+  b.className = 'pin' + (p.fav ? ' fav' : '');
   b.style.left = p.x * 100 + '%';
   b.style.top = p.y * 100 + '%';
   b.setAttribute('aria-label', p.name);
   b.title = p.name;
   b.addEventListener('click', () => openSheet(`
-    <p class="tag">places</p><h3 id="sheet-title">${p.name}</h3>
-    <div class="ph-box" style="aspect-ratio:16/9">photo</div>
-    <p style="margin-top:1rem">${p.note}</p>
-    <a class="small-link ph-link" href="#" aria-disabled="true">See it on Instagram</a>`));
+    <p class="tag">${p.tag}</p><h3 id="sheet-title">${p.name}</h3>
+    ${p.photo ? `<img class="full-photo place-photo" src="${p.photo}" alt="${p.alt}" />` : ''}
+    <p style="margin-top:1rem">${p.note}</p>`));
   pins.appendChild(b);
 });
 
